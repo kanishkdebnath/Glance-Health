@@ -148,13 +148,31 @@ class _BarsPainter extends CustomPainter {
         dashLine(canvas, start, end, line);
         prev = end;
       }
-      paintText(
-        canvas,
-        'Goal ${w.format(goals[0])}',
-        t.chart.copyWith(fontWeight: FontWeight.w600),
-        Offset(0, y(goals[0]) - 3),
-        anchor: TextAnchor.bottomLeft,
+      // A solid pill centred on the line, so bars never hide the label.
+      final tp = TextPainter(
+        text: TextSpan(
+          text: 'Goal ${w.format(goals[0])}',
+          style: t.chart.copyWith(color: p.ink, fontWeight: FontWeight.w600),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final pill = RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          0,
+          y(goals[0]) - tp.height / 2 - 3,
+          tp.width + 14,
+          tp.height + 6,
+        ),
+        const Radius.circular(Radii.chip),
       );
+      canvas.drawRRect(pill, Paint()..color = p.surface);
+      canvas.drawRRect(
+        pill,
+        Paint()
+          ..color = p.line
+          ..style = PaintingStyle.stroke,
+      );
+      tp.paint(canvas, Offset(7, pill.top + 3));
     }
   }
 
