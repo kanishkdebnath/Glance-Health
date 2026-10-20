@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'palette.dart';
 import 'tokens.dart';
 import 'typography.dart';
+import 'widgets.dart';
 
 /// Carries the palette and type scale through the widget tree.
 @immutable
@@ -43,6 +44,10 @@ class GlanceThemeSet {
   );
 }
 
+/// Every filled and outlined button gets a rim light and a soft shadow.
+Widget _raised(BuildContext context, Set<WidgetState> states, Widget? child) =>
+    Raised(radius: Radii.button, child: child ?? const SizedBox());
+
 ThemeData buildTheme(GlancePalette p) {
   final g = GlanceTheme(p);
   final scheme =
@@ -81,6 +86,7 @@ ThemeData buildTheme(GlancePalette p) {
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: p.inverseSurface,
+      elevation: 0,
       contentTextStyle: g.typeScale.body.copyWith(color: p.onInverseSurface),
       actionTextColor: p.isDark ? p.steps.main : p.steps.second,
       shape: RoundedRectangleBorder(
@@ -97,6 +103,28 @@ ThemeData buildTheme(GlancePalette p) {
       ),
     ),
     dividerTheme: DividerThemeData(color: p.line, thickness: 1, space: 1),
+    // Buttons share the Raised radius so their rim light lines up.
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(64, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.button),
+        ),
+        textStyle: g.typeScale.label,
+      ).copyWith(backgroundBuilder: _raised),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(64, 50),
+        foregroundColor: p.ink,
+        backgroundColor: p.glass,
+        side: BorderSide.none,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.button),
+        ),
+        textStyle: g.typeScale.label,
+      ).copyWith(backgroundBuilder: _raised),
+    ),
     extensions: [g],
   );
 }

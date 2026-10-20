@@ -42,6 +42,17 @@ class GlancePalette {
     required this.background,
     required this.surface,
     required this.glass,
+    required this.rimLight,
+    required this.rimShade,
+    required this.glassShadow,
+    required this.glassSheen,
+    required this.ray,
+    required this.pattern,
+    required this.seaTop,
+    required this.seaDeep,
+    required this.sky,
+    required this.skyGlow,
+    required this.particle,
     required this.ink,
     required this.ink2,
     required this.ink3,
@@ -65,9 +76,6 @@ class GlancePalette {
     required this.phaseFollicular,
     required this.phaseOvulation,
     required this.phaseLuteal,
-    required this.night,
-    required this.onNight,
-    required this.onNight2,
   });
 
   final Brightness brightness;
@@ -76,8 +84,35 @@ class GlancePalette {
   final Color background;
   final Color surface;
 
-  /// Frosted card fill, drawn over the screen wash.
+  /// Frosted card fill, drawn over the blurred screen behind it.
   final Color glass;
+
+  /// Glass edge: bright where light hits (top left), [rimShade] opposite.
+  final Color rimLight;
+  final Color rimShade;
+
+  /// Soft drop shadow under glass panels.
+  final Color glassShadow;
+
+  /// Light caught across the top of a glass panel.
+  final Color glassSheen;
+
+  /// Light rays falling across the screen background.
+  final Color ray;
+
+  /// Faint grain lines on the screen background.
+  final Color pattern;
+
+  /// Screen background: water near the surface, fading to the deep.
+  final Color seaTop;
+  final Color seaDeep;
+
+  /// The sun (light) or moon (dark) seen from under water, and its halo.
+  final Color sky;
+  final Color skyGlow;
+
+  /// Drifting particles that give the water depth.
+  final Color particle;
   final Color ink;
   final Color ink2;
   final Color ink3;
@@ -112,20 +147,24 @@ class GlancePalette {
   final Color phaseOvulation;
   final Color phaseLuteal;
 
-  /// Sleep header gradient, top to bottom. Stays dark in both themes.
-  final List<Color> night;
-
-  /// Text on the night gradient: primary and muted.
-  final Color onNight;
-  final Color onNight2;
-
   bool get isDark => brightness == Brightness.dark;
 
   static const light = GlancePalette(
     brightness: Brightness.light,
     background: Color(0xFFF2F4F8),
     surface: Color(0xFFFFFFFF),
-    glass: Color(0xCCFFFFFF),
+    glass: Color(0x5CFFFFFF),
+    rimLight: Color(0xF2FFFFFF),
+    rimShade: Color(0x14111627),
+    glassShadow: Color(0x1F1B2140),
+    glassSheen: Color(0x73FFFFFF),
+    ray: Color(0x66FFFFFF),
+    pattern: Color(0x0F111627),
+    seaTop: Color(0xFFE3F2F7),
+    seaDeep: Color(0xFFDDE3EE),
+    sky: Color(0xB3FFFCEB),
+    skyGlow: Color(0x66FFF1BF),
+    particle: Color(0x145A7A94),
     ink: Color(0xFF111627),
     ink2: Color(0xFF5A627A),
     ink3: Color(0xFF9AA1B4),
@@ -142,32 +181,32 @@ class GlancePalette {
       second: Color(0xFF1FA99A),
       dim: Color(0xFFBCE2C8),
       track: Color(0xFFE0F1E5),
-      wash: Color(0x422F9E5B),
-      wash2: Color(0x381FA99A),
+      wash: Color(0x5C2F9E5B),
+      wash2: Color(0x4D1FA99A),
     ),
     sleep: MetricColors(
       main: Color(0xFF5B5FD9),
       second: Color(0xFF8A6FF0),
       dim: Color(0xFFCFD1F6),
       track: Color(0xFFE6E7FA),
-      wash: Color(0x385B5FD9),
-      wash2: Color(0x338A6FF0),
+      wash: Color(0x4D5B5FD9),
+      wash2: Color(0x478A6FF0),
     ),
     heart: MetricColors(
       main: Color(0xFFE0604E),
       second: Color(0xFFF28C5B),
       dim: Color(0xFFF5CCC5),
       track: Color(0xFFFBE6E2),
-      wash: Color(0x3DE0604E),
-      wash2: Color(0x38F28C5B),
+      wash: Color(0x52E0604E),
+      wash2: Color(0x4DF28C5B),
     ),
     cycle: MetricColors(
       main: Color(0xFFB8479A),
       second: Color(0xFFE27BA8),
       dim: Color(0xFFEBC6E0),
       track: Color(0xFFF7E5F1),
-      wash: Color(0x33B8479A),
-      wash2: Color(0x38E27BA8),
+      wash: Color(0x47B8479A),
+      wash2: Color(0x4DE27BA8),
     ),
     stageAwake: Color(0xFFE3A653),
     stageRem: Color(0xFF8FB4F5),
@@ -177,16 +216,24 @@ class GlancePalette {
     phaseFollicular: Color(0xFF4A6FE0),
     phaseOvulation: Color(0xFFC2851A),
     phaseLuteal: Color(0xFF25A08A),
-    night: [Color(0xFF121838), Color(0xFF28316F), Color(0xFF56609F)],
-    onNight: Color(0xFFF1F2FB),
-    onNight2: Color(0xFFB8BDE6),
   );
 
   static const dark = GlancePalette(
     brightness: Brightness.dark,
     background: Color(0xFF0A0E1A),
     surface: Color(0xFF151B2E),
-    glass: Color(0xB8181F34),
+    glass: Color(0x4D1A2138),
+    rimLight: Color(0x40FFFFFF),
+    rimShade: Color(0x0AFFFFFF),
+    glassShadow: Color(0x8C000000),
+    glassSheen: Color(0x17FFFFFF),
+    ray: Color(0x14C8DCFF),
+    pattern: Color(0x0BFFFFFF),
+    seaTop: Color(0xFF0F2438),
+    seaDeep: Color(0xFF05080F),
+    sky: Color(0x73E6EDF8),
+    skyGlow: Color(0x1FA9C3EC),
+    particle: Color(0x17C3D8F5),
     ink: Color(0xFFEDF0F7),
     ink2: Color(0xFF99A1B8),
     ink3: Color(0xFF5E6680),
@@ -203,32 +250,32 @@ class GlancePalette {
       second: Color(0xFF2BBBA8),
       dim: Color(0xFF24513A),
       track: Color(0xFF1B3127),
-      wash: Color(0x573FA862),
-      wash2: Color(0x422BBBA8),
+      wash: Color(0x733FA862),
+      wash2: Color(0x5C2BBBA8),
     ),
     sleep: MetricColors(
       main: Color(0xFF7C82EC),
       second: Color(0xFF9C86F5),
       dim: Color(0xFF34386A),
       track: Color(0xFF1F2344),
-      wash: Color(0x577C82EC),
-      wash2: Color(0x479C86F5),
+      wash: Color(0x737C82EC),
+      wash2: Color(0x619C86F5),
     ),
     heart: MetricColors(
       main: Color(0xFFE2654F),
       second: Color(0xFFF39867),
       dim: Color(0xFF5A2E2A),
       track: Color(0xFF35201F),
-      wash: Color(0x52E2654F),
-      wash2: Color(0x3DF39867),
+      wash: Color(0x6BE2654F),
+      wash2: Color(0x57F39867),
     ),
     cycle: MetricColors(
       main: Color(0xFFC95AAE),
       second: Color(0xFFE58AB6),
       dim: Color(0xFF55294C),
       track: Color(0xFF321D30),
-      wash: Color(0x4DC95AAE),
-      wash2: Color(0x38E58AB6),
+      wash: Color(0x66C95AAE),
+      wash2: Color(0x52E58AB6),
     ),
     stageAwake: Color(0xFFD99B4C),
     stageRem: Color(0xFF88A9EE),
@@ -238,8 +285,5 @@ class GlancePalette {
     phaseFollicular: Color(0xFF6684EC),
     phaseOvulation: Color(0xFFB98222),
     phaseLuteal: Color(0xFF2CAA8E),
-    night: [Color(0xFF121838), Color(0xFF28316F), Color(0xFF56609F)],
-    onNight: Color(0xFFF1F2FB),
-    onNight2: Color(0xFFB8BDE6),
   );
 }
