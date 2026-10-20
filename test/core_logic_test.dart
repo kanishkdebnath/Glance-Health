@@ -3,6 +3,9 @@ import 'package:glance_health/core/baseline.dart';
 import 'package:glance_health/core/format.dart';
 import 'package:glance_health/core/goals.dart';
 import 'package:glance_health/core/pace.dart';
+import 'package:glance_health/core/health/health_data_source.dart';
+import 'package:glance_health/core/sleep_stats.dart';
+import 'package:glance_health/core/steps_stats.dart';
 import 'package:glance_health/features/home/headline.dart';
 
 void main() {
@@ -103,6 +106,120 @@ void main() {
       const g = Goals(steps: 8000, weekendSteps: 6000);
       expect(g.stepsFor(DateTime(2026, 10, 17)), 6000); // Saturday
       expect(g.stepsFor(DateTime(2026, 10, 19)), 8000); // Monday
+    });
+  });
+
+  group('step streaks', () {
+    // Monday 5 to Tuesday 20 October 2026; today is the 20th.
+    final today = DateTime(2026, 10, 20);
+    DateTime day(int d) => DateTime(2026, 10, d);
+    int goal(DateTime _) => 8000;
+    DailySeries<int> days(Map<int, int> m) =>
+        m.map((d, v) => MapEntry(day(d), v));
+
+    test('counts met days and skips an unfinished today', () {
+      final s = streaks(
+        days({15: 9000, 16: 9000, 17: 9000, 18: 9000, 19: 9000, 20: 300}),
+        goal,
+        today,
+      );
+      expect(s.current, 5);
+      expect(s.graceLeft, 1);
+    });
+
+    test('one missed day a week is forgiven, the second breaks the run', () {
+      // Week of 12 Oct: miss on 13th (grace), miss on 15th (break).
+      final s = streaks(
+        days({
+          12: 9000,
+          13: 100,
+          14: 9000,
+          15: 100,
+          16: 9000,
+          17: 9000,
+          18: 9000,
+        }),
+        goal,
+        today,
+      );
+      expect(
+        s.current,
+        3,
+      ); // 16, 17, 18; 19 is missing and uses this week's grace
+      expect(s.longest, 3);
+      expect(s.graceLeft, 0);
+    });
+
+    test('today counts once met', () {
+      final s = streaks(days({19: 9000, 20: 8000}), goal, today);
+      expect(s.current, 2);
+    });
+  });
+
+  group('step summaries', () {
+    final daily = {
+      DateTime(2026, 10, 12): 1000, // Monday
+      DateTime(2026, 10, 13): 3000,
+      DateTime(2026, 10, 19): 5000, // next Monday
+    };
+
+    test('best day and weekly totals', () {
+      expect(bestDay(daily)!.value, 5000);
+      expect(weeklyTotals(daily), {
+        DateTime(2026, 10, 12): 4000,
+        DateTime(2026, 10, 19): 5000,
+      });
+    });
+
+    test('weekly averages use only days with data', () {
+      expect(
+        weeklyAverages(daily, DateTime(2026, 10, 12), DateTime(2026, 10, 20)),
+        [2000, 5000],
+      );
+    });
+
+    test('usual steps by now', () {
+      final hours = [for (var h = 0; h < 24; h++) h >= 8 && h < 20 ? 100 : 0];
+      expect(usualStepsBy([hours], DateTime(2026, 10, 20, 14, 30)), 650);
+      expect(usualStepsBy([], DateTime(2026, 10, 20, 14)), isNull);
+    });
+  });
+
+  group('sleep summaries', () {
+    SleepSession night(int day, int bedHour, int bedMin, Duration asleep) {
+      final start = DateTime(2026, 10, day, bedHour, bedMin);
+      return SleepSession(start: start, end: start.add(asleep), asleep: asleep);
+    }
+
+    test('debt only counts short nights', () {
+      final nights = [
+        night(18, 23, 0, const Duration(hours: 7)),
+        night(19, 23, 0, const Duration(hours: 9)),
+      ];
+      expect(
+        sleepDebt(nights, const Duration(hours: 7, minutes: 30)),
+        const Duration(minutes: 30),
+      );
+    });
+
+    test('bedtime spread works across midnight', () {
+      final nights = [
+        night(18, 23, 30, const Duration(hours: 7)),
+        night(19, 0, 30, const Duration(hours: 7)),
+      ];
+      expect(bedtimeSpread(nights), const Duration(minutes: 30));
+      expect(bedtimeSpread(nights.take(1)), isNull);
+    });
+
+    test('stage totals', () {
+      final t = DateTime(2026, 10, 20);
+      final totals = stageTotals([
+        SleepSegment(SleepStage.deep, t, t.add(const Duration(minutes: 40))),
+        SleepSegment(SleepStage.light, t, t.add(const Duration(minutes: 10))),
+        SleepSegment(SleepStage.deep, t, t.add(const Duration(minutes: 5))),
+      ]);
+      expect(totals[SleepStage.deep], const Duration(minutes: 45));
+      expect(totals[SleepStage.rem], Duration.zero);
     });
   });
 }

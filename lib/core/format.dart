@@ -53,3 +53,26 @@ String longDate(DateTime d) =>
 
 /// "T" for Tuesday, for chart labels.
 String weekdayInitial(DateTime d) => _weekdays[d.weekday - 1][0];
+
+/// "12 Oct"
+String shortDate(DateTime d) =>
+    '${d.day} ${_months[d.month - 1].substring(0, 3)}';
+
+/// "Sat 12 Sep"
+String dayAndDate(DateTime d) =>
+    '${_weekdays[d.weekday - 1].substring(0, 3)} ${shortDate(d)}';
+
+/// "7–13 Sep", or "28 Sep – 4 Oct" across months.
+String dateRange(DateTime a, DateTime b) => a.month == b.month
+    ? '${a.day}–${shortDate(b)}'
+    : '${shortDate(a)} – ${shortDate(b)}';
+
+/// "Sep"
+String monthShort(int month) => _months[month - 1].substring(0, 3);
+
+/// "2.1M", "84.3k" or "940", for large totals.
+String compact(num n) => n >= 1e6
+    ? '${(n / 1e6).toStringAsFixed(1)}M'
+    : n >= 1e4
+    ? '${(n / 1e3).toStringAsFixed(1)}k'
+    : thousands(n);

@@ -59,8 +59,39 @@ final healthSourceProvider = Provider<HealthDataSource>((ref) {
   };
 });
 
-// ponytail: in-memory until local storage (drift) lands with the goals screen.
-final goalsProvider = Provider<Goals>((ref) => const Goals());
+/// Current goals, saved on this phone.
+// ponytail: one current value per goal. Goal history ("changes apply from
+// that day forward") moves into drift; until then past days are measured
+// against today's goal.
+class GoalsController extends Notifier<Goals> {
+  static const _steps = 'goals.steps';
+  static const _weekend = 'goals.weekendSteps';
+  static const _sleep = 'goals.sleepMinutes';
+
+  @override
+  Goals build() {
+    final prefs = ref.watch(prefsProvider);
+    const d = Goals();
+    return Goals(
+      steps: prefs.getInt(_steps) ?? d.steps,
+      weekendSteps: prefs.getInt(_weekend),
+      sleep: Duration(minutes: prefs.getInt(_sleep) ?? d.sleep.inMinutes),
+    );
+  }
+
+  void set(Goals g) {
+    final prefs = ref.read(prefsProvider);
+    prefs.setInt(_steps, g.steps);
+    final weekend = g.weekendSteps;
+    weekend == null ? prefs.remove(_weekend) : prefs.setInt(_weekend, weekend);
+    prefs.setInt(_sleep, g.sleep.inMinutes);
+    state = g;
+  }
+}
+
+final goalsProvider = NotifierProvider<GoalsController, Goals>(
+  GoalsController.new,
+);
 
 /// Which light/dark palette pair the app uses.
 final themeSetProvider = Provider<GlanceThemeSet>(
