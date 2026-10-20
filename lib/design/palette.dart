@@ -66,6 +66,8 @@ class GlancePalette {
     required this.phaseOvulation,
     required this.phaseLuteal,
     required this.night,
+    required this.onNight,
+    required this.onNight2,
   });
 
   final Brightness brightness;
@@ -112,6 +114,10 @@ class GlancePalette {
 
   /// Sleep header gradient, top to bottom. Stays dark in both themes.
   final List<Color> night;
+
+  /// Text on the night gradient: primary and muted.
+  final Color onNight;
+  final Color onNight2;
 
   bool get isDark => brightness == Brightness.dark;
 
@@ -172,6 +178,8 @@ class GlancePalette {
     phaseOvulation: Color(0xFFC2851A),
     phaseLuteal: Color(0xFF25A08A),
     night: [Color(0xFF121838), Color(0xFF28316F), Color(0xFF56609F)],
+    onNight: Color(0xFFF1F2FB),
+    onNight2: Color(0xFFB8BDE6),
   );
 
   static const dark = GlancePalette(
@@ -231,5 +239,7 @@ class GlancePalette {
     phaseOvulation: Color(0xFFB98222),
     phaseLuteal: Color(0xFF2CAA8E),
     night: [Color(0xFF121838), Color(0xFF28316F), Color(0xFF56609F)],
+    onNight: Color(0xFFF1F2FB),
+    onNight2: Color(0xFFB8BDE6),
   );
 }

@@ -263,16 +263,27 @@ class _DashedPillBorder extends CustomPainter {
 /// A number with smaller unit text, e.g. "7h 18m" or "58 bpm".
 /// Pass parts as (number, unit) pairs.
 class MetricText extends StatelessWidget {
-  const MetricText(this.parts, {super.key, this.style, this.semanticsLabel});
+  const MetricText(
+    this.parts, {
+    super.key,
+    this.style,
+    this.unitColor,
+    this.semanticsLabel,
+  });
 
   final List<(String, String)> parts;
   final TextStyle? style;
+
+  /// Defaults to the muted ink.
+  final Color? unitColor;
   final String? semanticsLabel;
 
   @override
   Widget build(BuildContext context) {
     final s = style ?? context.type.metric;
-    final unit = context.type.unit(s).copyWith(color: context.palette.ink2);
+    final unit = context.type
+        .unit(s)
+        .copyWith(color: unitColor ?? context.palette.ink2);
     return Text.rich(
       TextSpan(
         children: [
@@ -311,6 +322,74 @@ class CircleIconButton extends StatelessWidget {
         backgroundColor: p.chip,
         foregroundColor: p.ink,
         fixedSize: const Size(44, 44),
+      ),
+    );
+  }
+}
+
+/// A row of mutually exclusive options, e.g. Today / 7D / 30D / 90D / Year.
+class Segmented<T> extends StatelessWidget {
+  const Segmented({
+    super.key,
+    required this.values,
+    required this.selected,
+    required this.labelOf,
+    required this.onChanged,
+  });
+
+  final List<T> values;
+  final T selected;
+  final String Function(T) labelOf;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final t = context.type;
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: p.chip,
+        borderRadius: BorderRadius.circular(Radii.button - 2),
+      ),
+      child: Row(
+        children: [
+          for (final v in values)
+            Expanded(
+              child: Semantics(
+                button: true,
+                selected: v == selected,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => onChanged(v),
+                  child: AnimatedContainer(
+                    duration: Motion.quick,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: v == selected ? p.surface : Colors.transparent,
+                      borderRadius: BorderRadius.circular(Radii.button - 5),
+                      boxShadow: v == selected && !p.isDark
+                          ? const [
+                              BoxShadow(
+                                color: Color(0x14111627),
+                                blurRadius: 2,
+                                offset: Offset(0, 1),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Text(
+                      labelOf(v),
+                      textAlign: TextAlign.center,
+                      style: t.chip.copyWith(
+                        color: v == selected ? p.ink : p.ink2,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

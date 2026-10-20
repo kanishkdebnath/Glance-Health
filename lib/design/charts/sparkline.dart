@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import '../motion.dart';
 import '../palette.dart';
 import '../theme.dart';
+import 'chart_paint.dart';
 
 /// Small trend line with a soft gradient fill and an emphasised endpoint.
-/// [band] shades the user's usual range behind the line.
+/// [band] shades the user's usual range behind the line. With [ticks] it
+/// becomes a full trend chart: faint grid lines labelled on the right.
 class Sparkline extends StatelessWidget {
   const Sparkline({
     super.key,
@@ -16,12 +18,16 @@ class Sparkline extends StatelessWidget {
     required this.semanticsLabel,
     this.band,
     this.height = 34,
+    this.ticks = const [],
+    this.tickLabel,
   });
 
   final List<num> values;
   final MetricColors colors;
   final (num, num)? band;
   final double height;
+  final List<num> ticks;
+  final String Function(num)? tickLabel;
   final String semanticsLabel;
 
   @override
@@ -37,7 +43,16 @@ class Sparkline extends StatelessWidget {
           duration: motion(context, const Duration(milliseconds: 1000)),
           curve: Curves.easeInOutCubic,
           builder: (context, t, _) => CustomPaint(
-            painter: _SparkPainter(values, colors, band, context.palette, t),
+            painter: _SparkPainter(
+              values,
+              colors,
+              band,
+              context.palette,
+              t,
+              ticks,
+              tickLabel,
+              context.type.chart,
+            ),
           ),
         ),
       ),
@@ -46,7 +61,16 @@ class Sparkline extends StatelessWidget {
 }
 
 class _SparkPainter extends CustomPainter {
-  _SparkPainter(this.values, this.colors, this.band, this.p, this.progress);
+  _SparkPainter(
+    this.values,
+    this.colors,
+    this.band,
+    this.p,
+    this.progress,
+    this.ticks,
+    this.tickLabel,
+    this.label,
+  );
   final List<num> values;
   final MetricColors colors;
   final (num, num)? band;
@@ -54,6 +78,9 @@ class _SparkPainter extends CustomPainter {
 
   /// 0–1: how much of the line is drawn.
   final double progress;
+  final List<num> ticks;
+  final String Function(num)? tickLabel;
+  final TextStyle label;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -63,23 +90,35 @@ class _SparkPainter extends CustomPainter {
     final all = [
       ...values,
       if (b != null) ...[b.$1, b.$2],
+      ...ticks,
     ];
+    final right = ticks.isEmpty ? 0.0 : 30.0;
+    final w = size.width - right;
     final lo = all.reduce(math.min);
     final hi = all.reduce(math.max);
     final range = hi - lo == 0 ? 1 : hi - lo;
-    double x(int i) => pad + (size.width - pad * 2) * i / (values.length - 1);
+    double x(int i) => pad + (w - pad * 2) * i / (values.length - 1);
     double y(num v) => pad + (size.height - pad * 2) * (1 - (v - lo) / range);
 
     if (b != null) {
       canvas.drawRRect(
-        RRect.fromLTRBR(
-          0,
-          y(b.$2),
-          size.width,
-          y(b.$1),
-          const Radius.circular(3),
-        ),
+        RRect.fromLTRBR(0, y(b.$2), w, y(b.$1), const Radius.circular(3)),
         Paint()..color = p.band,
+      );
+    }
+
+    for (final t in ticks) {
+      canvas.drawLine(
+        Offset(0, y(t)),
+        Offset(w, y(t)),
+        Paint()..color = p.line,
+      );
+      paintText(
+        canvas,
+        tickLabel?.call(t) ?? '$t',
+        label,
+        Offset(w + 6, y(t)),
+        anchor: TextAnchor.centerLeft,
       );
     }
 
@@ -130,5 +169,6 @@ class _SparkPainter extends CustomPainter {
       old.band != band ||
       old.colors != colors ||
       old.p != p ||
-      old.progress != progress;
+      old.progress != progress ||
+      old.ticks != ticks;
 }
