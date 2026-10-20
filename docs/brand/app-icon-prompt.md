@@ -43,7 +43,7 @@ DOODLE WALLPAPER (covers the whole background)
 - Between the main doodles, scatter small filler marks in the same style and colour: four-point sparkles, little stars, plus signs, small circles and dots, short dashes.
 - Layout: about 45–60 doodles plus fillers, evenly spread with consistent spacing like a seamless wallpaper, each rotated at a slight random angle, no two identical doodles side by side, no obvious grid. The pattern runs right up to the letter and continues behind its gaps, but never draws on top of the white letter or the green dot.
 
-THE LETTER "G" (the only content)
+THE LETTER "G" (the main element, on top of the doodles)
 - A single capital "G", solid pure white #FFFFFF, perfectly flat: no gradient, no glow, no shadow, no outline.
 - Built from exactly two overlapping filled shapes with fully rounded ends:
   1. A thick circular ring, like a progress ring: it starts at about the 1 o'clock position and runs counter-clockwise all the way round to the 3 o'clock position (about 285 degrees), leaving an opening on the upper right. The ring's thickness is about 20% of the letter's height (around 100 px), uniform all the way round, with round ends.
