@@ -33,6 +33,7 @@ Phases follow the release plan in `PROJECT_CONTEXT.md` §7.
 ## Log
 
 ### 2026-10-20
+- Visual language moved to Liquid Glass over a deep-sea background: translucent blurred panels with rim light, sheen and outside-only shadows (`GlassSurface`); raised buttons (`Raised`, applied through the button theme); floating glass tab bar, sheets and toasts. Background: depth gradient, sun (light) or moon (dark) with light shafts, drifting colour currents, slow particles, angled grain lines. One 60 s loop; reduce motion stops it. Sleep's dark header panel replaced by the shared background.
 - Steps, Sleep and Heart tabs built to the design, with goal and sleep-target sheets and the status explainer. Placeholder screen removed.
 - Steps now come from Health Connect's sliced aggregate (`getHealthIntervalDataFromTypes`): a year of daily totals or a day of hourly totals in one call, instead of one call per day or hour.
 - Day heart-rate range reads raw samples one day at a time (Health Connect has no min/max aggregate for heart rate through the plugin); settled days are cached.
