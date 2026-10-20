@@ -11,15 +11,15 @@ Colours come from `lib/design/palette.dart`. If the palette changes, update the 
 | Square, unmasked artwork; the system rounds the corners | 1024 × 1024 full-bleed square, no rounded corners or frame |
 | Keep primary content centred so masking never clips it | G centred, inside the middle 60% of the canvas |
 | Embrace simplicity; a minimal number of shapes | Two white shapes (ring and crossbar) and one green dot |
-| Prefer a simple background, solid or gradient, that responds well to system lighting | Smooth teal-blue to indigo gradient with one soft green bloom; mid-dark, not black |
+| Prefer a simple background, solid or gradient, that responds well to system lighting | Smooth teal-blue to indigo gradient; mid-dark, not black. The doodle wallpaper is a deliberate exception (see below) |
 | Let the system handle highlights, shadows, blur, glows and bevels | None baked in; flat fills only |
 | Prefer clearly defined edges; avoid soft or feathered edges | Crisp vector-like edges |
-| Avoid thin lines and sharp corners; fine detail looks busy at small sizes | Very bold stroke, round ends, no texture, doodles or grain |
+| Avoid thin lines and sharp corners; fine detail looks busy at small sizes | Very bold G with round ends. Doodles are low-contrast and tone-on-tone so they recede at small sizes instead of cluttering |
 | A first-letter mnemonic is fine; avoid other text | Only the letter G |
 | Keep features identical across default, dark, clear and tinted appearances | Follow-ups change colours only, never shapes |
 | Use the default icon as the basis for dark; avoid excessively bright images | Dark follow-up deepens the background, keeps the G |
 
-The earlier textured and doodled versions (v1–v4) are in git history. They were dropped because Apple's guidance asks for a simple background and no fine detail.
+**Doodle wallpaper (v6):** the background carries an all-over outline doodle pattern, modelled on a reference icon with a dense tone-on-tone wallpaper of themed line icons. Apple prefers simple backgrounds, so the doodles are kept low-contrast and in the background's own hue: up close they give the icon an illustrated, friendly character; at home-screen size and in tinted or clear appearances they fade into the gradient and the white G carries the icon. Earlier versions (v1–v5) are in git history.
 
 ## Main prompt
 
@@ -33,7 +33,15 @@ FORMAT
 
 BACKGROUND
 - A simple, smooth gradient that stays mid-dark so system lighting looks good on it: deep teal-blue #123C55 at the top fading to calm indigo #33408E at the bottom.
-- One very large, very soft green bloom (#2F9E5B at about 25% opacity) in the upper-left area, blending smoothly into the gradient, giving a gentle hint of an aurora. No other shapes, patterns or details in the background.
+- One very large, very soft green bloom (#2F9E5B at about 25% opacity) in the upper-left area, blending smoothly into the gradient, giving a gentle hint of an aurora.
+
+DOODLE WALLPAPER (covers the whole background)
+- Fill the entire background, edge to edge and corner to corner, with an even, dense wallpaper of small hand-drawn outline doodles, in the style of a doodle-pattern phone wallpaper or a sketch-icon sticker sheet.
+- Style: outline only (no fills), one consistent stroke weight of about 5 px, fully rounded line ends and corners, friendly and slightly playful, like simple line icons drawn by hand. Each doodle is about 55–95 px.
+- Colour: tone-on-tone. Every doodle is a lighter tint of the background colour directly behind it (on the teal top a lighter teal, on the indigo bottom a lighter indigo), roughly 15–20% lighter than the background. Clearly visible when you look at the icon up close, but low contrast and calm. Never white, never a contrasting colour.
+- Theme: health, sleep and everyday movement. Draw a varied mix of: a running shoe, a pair of footprints, a dotted walking path ending in a map pin, a winding trail over a small mountain, a flight of stairs, a crescent moon, "zzz", a pillow, a bed, an alarm clock, a cloud, a sun, a heart outline, a short pulse line, a water drop, a stopwatch, a slim fitness band, a leaf, a small flower, a cup of tea, a calendar page, a tiny bar chart, an almost-closed progress ring.
+- Between the main doodles, scatter small filler marks in the same style and colour: four-point sparkles, little stars, plus signs, small circles and dots, short dashes.
+- Layout: about 45–60 doodles plus fillers, evenly spread with consistent spacing like a seamless wallpaper, each rotated at a slight random angle, no two identical doodles side by side, no obvious grid. The pattern runs right up to the letter and continues behind its gaps, but never draws on top of the white letter or the green dot.
 
 THE LETTER "G" (the only content)
 - A single capital "G", solid pure white #FFFFFF, perfectly flat: no gradient, no glow, no shadow, no outline.
@@ -48,13 +56,13 @@ ONE ACCENT
 
 FEEL
 - Calm, modern, confident and friendly. Premium wellness, not medical, not a gym.
-- Must be instantly recognisable at 40 × 40 px: a bold white G with a green dot on a deep blue-teal gradient.
+- Must be instantly recognisable at 40 × 40 px: a bold white G with a green dot on a deep blue-teal gradient; at that size the doodles blend into the background.
 
 DO NOT INCLUDE
 - Any glow, halo, drop shadow, inner shadow, highlight, gloss, bevel, emboss, glass, reflection, blur or lens effect. The system adds its own.
-- Any texture, grain, noise, doodles, patterns, stars, sparkles, lines or other symbols.
+- Any texture, grain or noise. Any doodles that are filled, white, brightly coloured, high contrast, larger than about 100 px, or drawn over the letter.
 - Any circle, disc, bubble, badge or shape behind the letter.
-- Any other letters, words, numbers or the app name.
+- Any other letters, words, numbers or the app name (the "zzz" doodle is the only exception).
 - Thin lines, sharp corners, or a gradient on the letter.
 - Rounded-corner frame, border, transparent corners, watermark or signature.
 ```
@@ -64,13 +72,13 @@ DO NOT INCLUDE
 **Dark appearance (iOS dark home screen)**
 
 ```
-Now make the dark-appearance version of exactly this icon. Keep the letter shapes, sizes, positions and the green dot identical. Deepen the background to a darker gradient, #0B1A2A at the top to #1A2050 at the bottom, with the green bloom reduced to about 15% opacity. Keep the G pure white and the dot #3FD07A. No other changes and still no effects.
+Now make the dark-appearance version of exactly this icon. Keep the letter shapes, sizes, positions and the green dot identical. Deepen the background to a darker gradient, #0B1A2A at the top to #1A2050 at the bottom, with the green bloom reduced to about 15% opacity. Keep the same doodle wallpaper, recoloured as a lighter tint of the new darker background (about 12–15% lighter). Keep the G pure white and the dot #3FD07A. No other changes and still no effects.
 ```
 
 **Tinted and clear appearances, Android 13+ themed icon (monochrome)**
 
 ```
-Now make a monochrome version of exactly this icon for tinted and themed icons: the same G and dot, same size and position, in solid pure white #FFFFFF, on a plain solid black #000000 background. No gradient, no bloom, no grey tones, no effects.
+Now make a monochrome version of exactly this icon for tinted and themed icons: the same G and dot, same size and position, in solid pure white #FFFFFF, on a plain solid black #000000 background. No gradient, no bloom, no doodles, no grey tones, no effects.
 ```
 
 **Android adaptive icon, foreground**
@@ -82,13 +90,19 @@ Now give me only the foreground for an Android adaptive icon: the same white G a
 **Android adaptive icon, background**
 
 ```
-Now give me only the background: the same teal-blue to indigo gradient with the soft green bloom, 1024 × 1024 px, full bleed, with no letter, no dot and nothing else.
+Now give me only the background: the same teal-blue to indigo gradient with the soft green bloom and the same doodle wallpaper, 1024 × 1024 px, full bleed, with no letter and no dot.
+```
+
+**If the doodles come out too bright or too faint**
+
+```
+Adjust only the doodles: make them a lighter tint of the background behind them, about 15–20% lighter, so they are clearly visible up close but calm and low contrast, like a tone-on-tone wallpaper. Keep everything else identical.
 ```
 
 **If Gemini adds effects anyway**
 
 ```
-Remove every glow, shadow, highlight and texture. The letter and dot must be perfectly flat solid colours with crisp edges, and the background a smooth gradient only. Keep everything else identical.
+Remove every glow, shadow, highlight and texture. The letter and dot must be perfectly flat solid colours with crisp edges, and the background a smooth gradient with the tone-on-tone doodle wallpaper. Keep everything else identical.
 ```
 
 ## Checking the result
