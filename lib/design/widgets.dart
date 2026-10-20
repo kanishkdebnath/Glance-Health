@@ -355,6 +355,7 @@ class GlassSurface extends StatelessWidget {
     this.shadow = true,
     this.lift = 8,
     this.fill,
+    this.floating = false,
   });
 
   final Widget child;
@@ -364,6 +365,11 @@ class GlassSurface extends StatelessWidget {
 
   /// How far the shadow drops below the panel.
   final double lift;
+
+  /// True for glass that sits above other glass (tab bar, sheets, toasts).
+  /// Grouped blurs share one snapshot taken under the content, so floating
+  /// glass takes its own and shows the cards beneath it.
+  final bool floating;
 
   /// Defaults to the palette's glass.
   final Color? fill;
@@ -384,7 +390,8 @@ class GlassSurface extends StatelessWidget {
       foregroundPainter: _RimLight(radius, p.rimLight, p.rimShade),
       child: ClipRRect(
         borderRadius: shape,
-        child: BackdropFilter.grouped(
+        child: _Backdrop(
+          floating: floating,
           filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
           child: DecoratedBox(
             decoration: BoxDecoration(color: fill ?? p.glass),
@@ -790,6 +797,7 @@ Future<T?> showGlassSheet<T>(
       child: GlassSurface(
         radius: Radii.sheet,
         blur: 30,
+        floating: true,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -821,6 +829,7 @@ void showGlassToast(BuildContext context, String message) {
       content: GlassSurface(
         radius: Radii.button,
         blur: 24,
+        floating: true,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: Space.l,
@@ -831,4 +840,20 @@ void showGlassToast(BuildContext context, String message) {
       ),
     ),
   );
+}
+
+class _Backdrop extends StatelessWidget {
+  const _Backdrop({
+    required this.floating,
+    required this.filter,
+    required this.child,
+  });
+  final bool floating;
+  final ImageFilter filter;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => floating
+      ? BackdropFilter(filter: filter, child: child)
+      : BackdropFilter.grouped(filter: filter, child: child);
 }

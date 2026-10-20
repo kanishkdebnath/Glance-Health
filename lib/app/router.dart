@@ -69,7 +69,10 @@ class _GlassTabBar extends StatelessWidget {
     return GlassSurface(
       key: const Key('tabBar'),
       radius: Radii.chip,
-      blur: 24,
+      blur: 8,
+      floating: true,
+      // Brighter and clearer than cards so it reads as glass over the deep.
+      fill: p.surface.withValues(alpha: p.isDark ? 0.10 : 0.30),
       child: SizedBox(
         height: 64,
         child: Padding(
