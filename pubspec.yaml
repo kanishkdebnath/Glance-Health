@@ -26,6 +26,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -37,3 +38,18 @@ flutter:
     - family: Figtree
       fonts:
         - asset: assets/fonts/Figtree-Variable.ttf
+
+# App icon source: assets/icon/app_icon.png (1024 px, cropped from the Gemini
+# render; prompt in docs/brand/app-icon-prompt.md). Regenerate after changing it:
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: assets/icon/app_icon.png
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  # Android adaptive icons show only the middle ~66%, which would clip the G.
+  # ponytail: the whole square is inset over its average edge colour; split
+  # into real foreground/background layers if the launcher crop looks off.
+  adaptive_icon_background: "#265F82"
+  adaptive_icon_foreground: assets/icon/app_icon.png
+  adaptive_icon_foreground_inset: 16
