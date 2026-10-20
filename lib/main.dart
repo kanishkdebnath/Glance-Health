@@ -30,6 +30,8 @@ class GlanceApp extends ConsumerWidget {
       darkTheme: buildTheme(themes.dark),
       themeMode: ref.watch(themeModeProvider),
       routerConfig: router,
+      // Glass panels share one backdrop read per frame.
+      builder: (context, child) => BackdropGroup(child: child!),
     );
   }
 }
