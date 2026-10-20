@@ -1,59 +1,66 @@
 # App icon prompt (Google Gemini)
 
-Concept: a single bold, rounded white **G** floating on a night-sky aurora built from the app's own colour blooms (green, teal, indigo), with a frosted-glass disc behind the letter, faint hand-drawn doodles around the edges and fine film grain. The G's open arc echoes the 270° steps ring on Home, and a small green dot at its tip echoes the ring's bright end. Paste the main prompt into Gemini first, then use the follow-up prompts in the same chat for the platform variants.
+Concept: a single bold, rounded white **G** with a small green tip dot, floating directly on a night-sky aurora built from the app's own colour blooms (green, teal, indigo). The whole background carries a faint tone-on-tone doodle pattern and a soft paper-grain texture, so it feels illustrated up close and clean from a distance. The G's open arc echoes the 270° steps ring on Home. Paste the main prompt into Gemini first, then use the follow-up prompts in the same chat for the platform variants.
 
 Colours come from `lib/design/palette.dart`. If the palette changes, update the hex values here.
 
-History: v1 (green gradient G on a flat night-blue gradient) looked too flat and plain; v2 makes the G white and adds depth, texture and atmosphere; v3 adds a faint hand-drawn doodle layer for a subtle illustrated feel.
+History:
+- v1: green gradient G on a flat night-blue gradient. Too flat and plain.
+- v2: white G, aurora background, frosted glass disc, film grain.
+- v3: added faint hand-drawn doodles. Gemini drew them far too bright, and the glass disc read as a white bubble.
+- v4: no disc; the doodles become an all-over tone-on-tone pattern at very low contrast, plus paper texture.
 
 ## Main prompt
 
 ```
-Create a mobile app icon for "Glance Health", a calm, beautiful health app you check for five seconds each morning to see your steps, last night's sleep and your heart rate. The icon is one capital letter "G". It should feel like looking up at a quiet night sky just before dawn: calm, a little magical, alive, and premium. Think of a boutique wellness brand, not a medical app and not a gym app.
+Create a mobile app icon for "Glance Health", a calm, beautiful health app you check for five seconds each morning to see your steps, last night's sleep and your heart rate. The icon is one capital letter "G" on a textured night-sky background. It should feel like a quiet night sky just before dawn, sketched in a designer's notebook: calm, a little magical, crafted, and premium. Think of a boutique wellness brand, not a medical app and not a gym app.
 
 FORMAT
 - One square image, 1024 × 1024 px, full bleed: the artwork fills the square edge to edge.
 - Do NOT draw rounded corners, a squircle mask, a frame, a border, a phone, a home screen or a mockup. The operating system applies the corner shape; I need the flat square artwork only.
-- Rich digital illustration with real depth and texture, but clean and graphic overall. Not 3D-rendered plastic, not photo-real.
+- Rich digital illustration with depth and texture, but clean and graphic overall. Not 3D-rendered plastic, not photo-real.
 
 THE LETTER "G"
-- One capital "G" in warm white (#FFFFFF at the top easing to a very slightly mint-tinted white #ECFFF5 at the bottom, so it has a gentle sheen and does not look like flat clip art).
-- Centred, about 52% of the icon's width (roughly 530 px wide), optically centred: nudge it slightly left because the opening is on the right.
-- Geometric, friendly, rounded construction in the spirit of the Outfit typeface: a near-perfect circular bowl, very bold and uniform stroke (about 17% of the letter height, roughly 95 px), fully rounded stroke ends. Confident and soft at the same time.
+- One capital "G" in warm white (#FFFFFF at the top easing to a very slightly mint-tinted white #ECFFF5 at the bottom, a gentle sheen so it does not look like flat clip art).
+- It sits directly on the background. There is NO circle, bubble, disc, glass shape, badge, plate or halo shape behind it.
+- Centred, about 54% of the icon's width (roughly 550 px wide), optically centred: nudge it slightly left because the opening is on the right.
+- Geometric, friendly, rounded construction in the spirit of the Outfit typeface: a near-perfect circular bowl, very bold and uniform stroke (about 17% of the letter height, roughly 95 px), fully rounded stroke ends.
 - The bowl is a thick circular arc starting at about 1 o'clock and sweeping counter-clockwise round to about 4 o'clock, leaving a clean opening on the upper right, like a progress ring that is nearly complete. A short horizontal crossbar comes in from the lower end of the arc and stops exactly at the centre of the circle, with a rounded end. No spur, no serif.
-- At the top end of the arc (the 1 o'clock tip) place one small, bright green dot (#3FD07A, about 40 px across) sitting just beyond the rounded tip, with a tiny soft green glow, like the bright leading edge of a progress ring. This is the only accent on the letter.
-- The G emits a soft, wide, green-white glow (#9EF0C0 at about 20% opacity, blur radius about 60 px) so it feels lit from within, and casts a very soft, low-contrast shadow downwards (#0A0E1A at about 35%, offset 12 px down, blur 30 px) so it floats slightly above the background.
-
-BEHIND THE LETTER: A FROSTED GLASS DISC
-- A large circle centred behind the G, about 76% of the icon width (roughly 780 px), made of frosted glass: very slightly lighter than the background (white at about 6–8% opacity), softly blurring the aurora behind it, with a thin luminous rim along its upper-left edge (white at about 25% opacity fading to nothing around the circle) as if catching light from the top left. Subtle, not a hard outline.
+- Just beyond the top tip of the arc (1 o'clock) place one small, bright green dot (#3FD07A, about 40 px across) with a tiny soft green glow, like the bright leading edge of a progress ring. This is the only accent on the letter.
+- Lighting: a soft, diffuse green-white glow around the letter (#9EF0C0 at about 15% opacity, blur radius about 70 px) that simply fades into the background with no visible edge, and a very soft low-contrast shadow below (#0A0E1A at about 30%, offset 10 px down, blur 30 px) so it floats slightly.
 
 BACKGROUND: NIGHT AURORA
 - Base: a deep night-blue vertical gradient from #0E1330 at the top to #28316F at the bottom.
 - Over it, soft overlapping colour blooms like a gentle aurora or mesh gradient:
-  - a large green bloom (#2F9E5B, about 45% opacity) rising from the upper left,
-  - a teal bloom (#1FA99A, about 35% opacity) drifting across the upper right,
-  - an indigo-violet bloom (#5B5FD9 to #8A6FF0, about 40% opacity) pooling in the lower right.
-  The blooms are large, smooth and slightly asymmetric, blending into each other with no hard edges, and the overall image stays dark enough that the white G pops.
+  - a large green bloom (#2F9E5B, about 40% opacity) rising from the upper left,
+  - a teal bloom (#1FA99A, about 30% opacity) drifting across the upper right,
+  - an indigo-violet bloom (#5B5FD9 to #8A6FF0, about 35% opacity) pooling in the lower right.
+  Large, smooth, slightly asymmetric, no hard edges. The overall image stays dark so the white G is by far the brightest element.
 - A soft vignette darkens the four corners slightly.
-- A fine, even film-grain texture across the whole background and glass disc (about 3–4% monochrome noise) so it feels tactile and printed rather than flat digital. The grain must be subtle: invisible at small sizes, felt at large sizes. Keep the letter itself clean, with no grain on it.
 
-DOODLE TEXTURE (subtle illustration layer)
-- Scatter a sparse pattern of small hand-drawn doodles across the background, like marks from a fine white gel pen in a sketchbook. Single-weight wobbly monoline strokes (about 3 px), slightly imperfect and human, never vector-perfect.
-- Doodle vocabulary, all tiny (40–90 px each), drawn loosely: a dotted footpath that curls into a loop, a gentle wavy line like slow breathing, a small crescent moon outline, a tiny "z z" in handwriting, a small heart outline, a little spiral, a four-point sparkle cross, a squiggle, a few loose dots, a small open circle like a ring that is almost closed.
-- About 14–18 doodles in total, spaced irregularly with plenty of empty space between them, rotated at different gentle angles. No two identical doodles next to each other. No grid, no repeating tile look.
-- Very low contrast: white at 7–10% opacity, some tinted mint (#9EF0C0) or lavender (#B7B9F5) at the same opacity, so they read as texture, not as icons. At 60 px icon size they should disappear completely.
-- Keep the doodles mostly in the outer ring of the composition: they fade out towards the centre and never appear inside the frosted glass disc or touch the letter. Corners and edges carry the most doodles.
-- The doodles sit under the film grain, so the grain softens them slightly.
+ALL-OVER DOODLE PATTERN (very faint)
+- Cover the entire background, edge to edge and behind the letter too, with a loose hand-drawn doodle pattern, like a sketchbook page seen through dusk.
+- Drawn TONE-ON-TONE: each doodle is only slightly lighter than the colour directly beneath it (about 4–6% lighter in brightness), never white, never mint, never a contrasting colour. On the green bloom the doodles are a slightly lighter green, on the indigo they are a slightly lighter indigo, and so on. They must be barely noticeable, like a watermark or a pattern embossed into paper; you only see them when you look closely.
+- Single-weight wobbly monoline strokes (about 3 px), imperfect and human, like a fine gel pen.
+- Doodle vocabulary, small (30–80 px each): dotted footpaths that curl into loops, gentle wavy lines like slow breathing, small crescent outlines, tiny "z z" handwriting, small heart outlines, little spirals, four-point sparkle crosses, squiggles, loose dots, small open circles like almost-closed rings.
+- Dense enough to read as a pattern (roughly 40–60 doodles), evenly distributed but irregular: varied rotation and spacing, no grid, no obvious repeating tile, no two identical doodles side by side.
+- Around the letter itself the pattern thins out slightly so the G's edges stay crisp, but there is no empty circle or shape around the G.
+- At 60 px icon size the pattern must be completely invisible; the icon should then read as just a white G on a glowing night gradient.
+
+SURFACE TEXTURE
+- Over the whole background (not on the letter), add a subtle tactile texture: fine film grain (about 3% monochrome noise) plus a faint paper or risograph fibre texture, so it feels printed and crafted rather than flat digital.
+- The texture sits on top of the doodles and softens them further. Keep it even and quiet: no scratches, no dust specks, no heavy grunge.
 
 FEEL AND QUALITY
-- Calm, modern, quietly colourful, with character: the letter should feel like a small moon or a glowing dial in a night sky.
-- Must read instantly at 40 × 40 px on a busy home screen: the white G is the brightest thing in the image by far; background detail stays soft and low contrast.
-- Balanced composition with generous breathing room around the letter.
+- Calm, modern, quietly colourful, with character: the letter feels like a glowing dial in a night sky drawn in a notebook.
+- Must read instantly at 40 × 40 px on a busy home screen: a crisp white G on a dark glowing gradient, background detail invisible at that size.
+- Balanced composition with breathing room around the letter.
 
 DO NOT INCLUDE
-- Any other letters, words, numbers or the app name.
-- Any solid, filled, bright or large symbols: stars, moons, planets, hearts, heartbeat / ECG lines, footprints, shoes, leaves, medical crosses, watches or emoji. Small faint outline doodles in the doodle layer are the only exception.
-- Rings around the G other than the frosted disc.
+- Any circle, bubble, disc, glass shape, badge, plate, ring or halo shape behind or around the G.
+- White, mint or high-contrast doodles; doodles must be tone-on-tone and barely visible.
+- Any other letters, words, numbers or the app name (the tiny "z z" doodles are the only exception).
+- Any solid, filled, bright or large symbols: stars, moons, planets, hearts, heartbeat / ECG lines, footprints, shoes, leaves, medical crosses, watches or emoji.
 - Hard 3D extrusion, bevels, chrome, glossy plastic highlights, lens flares, light rays, long shadows, outlines or strokes around the letter.
 - Neon, rainbow or saturated pink and purple gradients.
 - Rounded-corner frame, white border, padding frame, transparent corners, watermarks or signatures.
@@ -61,16 +68,22 @@ DO NOT INCLUDE
 
 ## Follow-up prompts (same chat)
 
+**If the doodles are still too visible**
+
+```
+Make the doodle pattern half as visible again. Each doodle should be only a few percent lighter than the colour beneath it, so the pattern is barely noticeable even at full size. Keep everything else exactly the same.
+```
+
 **Android adaptive icon, foreground layer**
 
 ```
-Now give me only the foreground layer for an Android adaptive icon: the same white "G" with its green tip dot, inner sheen, soft glow and soft drop shadow, on a fully transparent background, 1024 × 1024 px. Scale it so the letter is about 420 px wide, centred inside the central safe circle of 66% of the canvas (about 680 px diameter). No background, no glass disc.
+Now give me only the foreground layer for an Android adaptive icon: the same white "G" with its green tip dot, sheen, soft glow and soft drop shadow, on a fully transparent background, 1024 × 1024 px. Scale it so the letter is about 420 px wide, centred inside the central safe circle of 66% of the canvas (about 680 px diameter). Nothing else.
 ```
 
 **Android adaptive icon, background layer**
 
 ```
-Now give me only the background layer: the same night aurora (night-blue base, green, teal and indigo blooms, vignette, faint hand-drawn doodle layer, fine grain) with the frosted glass disc centred, 1024 × 1024 px, full bleed, no letter.
+Now give me only the background layer: the same night aurora (night-blue base, green, teal and indigo blooms, vignette), the same faint tone-on-tone doodle pattern across the whole square, and the same grain and paper texture, 1024 × 1024 px, full bleed, no letter and no shapes in the centre.
 ```
 
 **Monochrome (Android 13+ themed icons, iOS tinted icons)**
@@ -82,17 +95,17 @@ Now give me a monochrome version: the same "G" shape with its tip dot, in solid 
 **iOS dark appearance**
 
 ```
-Now give me the iOS dark-mode variant: the same white "G" with its green tip dot and soft glow, centred at the same size as the main icon, on a fully transparent background (iOS supplies the dark backdrop). 1024 × 1024 px, no aurora, no glass disc.
+Now give me the iOS dark-mode variant: the same white "G" with its green tip dot and soft glow, centred at the same size as the main icon, on a fully transparent background (iOS supplies the dark backdrop). 1024 × 1024 px, no background, no pattern.
 ```
 
 **Warmer alternative (optional, for comparison)**
 
 ```
-Give me one alternative of the main icon where the aurora leans towards dawn: keep the night-blue base and the white G, but make the lower bloom a soft apricot (#F28C5B at about 30%) instead of indigo-violet, as if the sun is about to rise. Everything else identical.
+Give me one alternative of the main icon where the aurora leans towards dawn: keep the night-blue base, the white G and the faint doodle pattern, but make the lower bloom a soft apricot (#F28C5B at about 30%) instead of indigo-violet, as if the sun is about to rise. Everything else identical.
 ```
 
 ## Checking the result
 
-- View it at 40 px and 60 px next to real home-screen icons: the G and its opening must stay legible, and the tip dot may disappear at small sizes (that's fine).
-- Gemini adds a visible sparkle watermark in the bottom-right corner. The shipped icon must be clean, so treat Gemini output as the concept, then rebuild the final artwork as vector (SVG) with the exact palette hexes and export the 1024 px master from that.
+- View it at 40 px and 60 px next to real home-screen icons: the G and its opening must stay legible, and the doodle pattern should vanish completely.
+- Gemini adds a visible sparkle watermark in the bottom-right corner. The shipped icon must be clean, so treat Gemini output as the concept, then rebuild the final artwork with the exact palette hexes and export the 1024 px master from that. The doodle and paper layers can be redrawn or sourced as a licensed texture.
 - Generate app icon sizes from the master with `flutter_launcher_icons` (add it as a dev dependency when the icon is final), using the foreground, background and monochrome layers for Android.
