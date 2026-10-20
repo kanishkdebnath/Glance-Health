@@ -1,10 +1,10 @@
 # App icon prompt (Google Gemini)
 
-Concept: a single bold, rounded white **G** floating on a night-sky aurora built from the app's own colour blooms (green, teal, indigo), with a frosted-glass disc behind the letter and fine film grain. The G's open arc echoes the 270° steps ring on Home, and a small green dot at its tip echoes the ring's bright end. Paste the main prompt into Gemini first, then use the follow-up prompts in the same chat for the platform variants.
+Concept: a single bold, rounded white **G** floating on a night-sky aurora built from the app's own colour blooms (green, teal, indigo), with a frosted-glass disc behind the letter, faint hand-drawn doodles around the edges and fine film grain. The G's open arc echoes the 270° steps ring on Home, and a small green dot at its tip echoes the ring's bright end. Paste the main prompt into Gemini first, then use the follow-up prompts in the same chat for the platform variants.
 
 Colours come from `lib/design/palette.dart`. If the palette changes, update the hex values here.
 
-History: v1 (green gradient G on a flat night-blue gradient) looked too flat and plain; v2 makes the G white and adds depth, texture and atmosphere.
+History: v1 (green gradient G on a flat night-blue gradient) looked too flat and plain; v2 makes the G white and adds depth, texture and atmosphere; v3 adds a faint hand-drawn doodle layer for a subtle illustrated feel.
 
 ## Main prompt
 
@@ -37,6 +37,14 @@ BACKGROUND: NIGHT AURORA
 - A soft vignette darkens the four corners slightly.
 - A fine, even film-grain texture across the whole background and glass disc (about 3–4% monochrome noise) so it feels tactile and printed rather than flat digital. The grain must be subtle: invisible at small sizes, felt at large sizes. Keep the letter itself clean, with no grain on it.
 
+DOODLE TEXTURE (subtle illustration layer)
+- Scatter a sparse pattern of small hand-drawn doodles across the background, like marks from a fine white gel pen in a sketchbook. Single-weight wobbly monoline strokes (about 3 px), slightly imperfect and human, never vector-perfect.
+- Doodle vocabulary, all tiny (40–90 px each), drawn loosely: a dotted footpath that curls into a loop, a gentle wavy line like slow breathing, a small crescent moon outline, a tiny "z z" in handwriting, a small heart outline, a little spiral, a four-point sparkle cross, a squiggle, a few loose dots, a small open circle like a ring that is almost closed.
+- About 14–18 doodles in total, spaced irregularly with plenty of empty space between them, rotated at different gentle angles. No two identical doodles next to each other. No grid, no repeating tile look.
+- Very low contrast: white at 7–10% opacity, some tinted mint (#9EF0C0) or lavender (#B7B9F5) at the same opacity, so they read as texture, not as icons. At 60 px icon size they should disappear completely.
+- Keep the doodles mostly in the outer ring of the composition: they fade out towards the centre and never appear inside the frosted glass disc or touch the letter. Corners and edges carry the most doodles.
+- The doodles sit under the film grain, so the grain softens them slightly.
+
 FEEL AND QUALITY
 - Calm, modern, quietly colourful, with character: the letter should feel like a small moon or a glowing dial in a night sky.
 - Must read instantly at 40 × 40 px on a busy home screen: the white G is the brightest thing in the image by far; background detail stays soft and low contrast.
@@ -44,7 +52,8 @@ FEEL AND QUALITY
 
 DO NOT INCLUDE
 - Any other letters, words, numbers or the app name.
-- Stars, sparkles, twinkles, moons, planets, hearts, heartbeat / ECG lines, footprints, shoes, leaves, medical crosses, watches, rings around the G other than the frosted disc, or emoji.
+- Any solid, filled, bright or large symbols: stars, moons, planets, hearts, heartbeat / ECG lines, footprints, shoes, leaves, medical crosses, watches or emoji. Small faint outline doodles in the doodle layer are the only exception.
+- Rings around the G other than the frosted disc.
 - Hard 3D extrusion, bevels, chrome, glossy plastic highlights, lens flares, light rays, long shadows, outlines or strokes around the letter.
 - Neon, rainbow or saturated pink and purple gradients.
 - Rounded-corner frame, white border, padding frame, transparent corners, watermarks or signatures.
@@ -61,7 +70,7 @@ Now give me only the foreground layer for an Android adaptive icon: the same whi
 **Android adaptive icon, background layer**
 
 ```
-Now give me only the background layer: the same night aurora (night-blue base, green, teal and indigo blooms, vignette, fine grain) with the frosted glass disc centred, 1024 × 1024 px, full bleed, no letter.
+Now give me only the background layer: the same night aurora (night-blue base, green, teal and indigo blooms, vignette, faint hand-drawn doodle layer, fine grain) with the frosted glass disc centred, 1024 × 1024 px, full bleed, no letter.
 ```
 
 **Monochrome (Android 13+ themed icons, iOS tinted icons)**
