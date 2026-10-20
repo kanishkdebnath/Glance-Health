@@ -1,0 +1,39 @@
+name: glance_health
+description: "A five-second daily check of steps, sleep and heart rate from Fitbit Air. Runs entirely on the device."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.1.0
+  health: ^13.3.2
+  shared_preferences: ^2.5.6
+
+# shared_preferences_android 2.5.0–2.5.1 (Pigeon JNI, released Oct 2026) crash on start in release
+# builds because R8 strips the Kotlin classes it looks up by name.
+# ponytail: pinned to the last pre-JNI version; lift once the plugin ships
+# keep rules (check its CHANGELOG).
+dependency_overrides:
+  shared_preferences_android: 2.4.28
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  # Fonts are bundled: the app makes no network calls, so it never fetches fonts.
+  fonts:
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/Outfit-Variable.ttf
+    - family: Figtree
+      fonts:
+        - asset: assets/fonts/Figtree-Variable.ttf
