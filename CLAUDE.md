@@ -13,6 +13,8 @@ flutter test                         # all tests
 flutter test test/core_logic_test.dart --plain-name "baseline"   # one group/test
 dart format lib test                 # 80-col default formatter
 flutter build apk --release
+dart run flutter_launcher_icons      # after changing assets/icon/app_icon.png; then
+git checkout ios/Runner.xcodeproj/project.pbxproj   # undo the tool's bogus build-setting edit
 ```
 
 `adb` is not on PATH on the dev machine; use `~/Library/Android/sdk/platform-tools/adb` (test phone: Galaxy S23 Ultra, Android 16). `flutter devices` may not list the phone until the adb server has been started with that binary. Install and launch:

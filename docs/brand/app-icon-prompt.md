@@ -105,6 +105,10 @@ Adjust only the doodles: make them a lighter tint of the background behind them,
 Remove every glow, shadow, highlight and texture. The letter and dot must be perfectly flat solid colours with crisp edges, and the background a smooth gradient with the tone-on-tone doodle wallpaper. Keep everything else identical.
 ```
 
+## Shipped icon
+
+`assets/icon/app_icon.png` is the v6 render: the 2048 px Gemini image centre-cropped by 208 px per side (which removes the sparkle watermark) and resized to 1024. It is wired into both platforms with `flutter_launcher_icons` (see README). Dark, tinted and Android themed (monochrome) variants are not made yet.
+
 ## Checking the result
 
 - View it at 40 px and 60 px next to real home-screen icons: the G, its opening and the dot must stay clear.

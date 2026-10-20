@@ -16,6 +16,17 @@ flutter test
 - [CLAUDE.md](CLAUDE.md): engineering notes and gotchas (also read by Claude Code)
 - [docs/brand/app-icon-prompt.md](docs/brand/app-icon-prompt.md): prompt for generating the app icon
 
+## App icon
+
+The source is `assets/icon/app_icon.png` (1024 × 1024, generated in Gemini from the prompt above, cropped to remove the Gemini watermark). After replacing it, regenerate the Android and iOS icons:
+
+```sh
+dart run flutter_launcher_icons
+git checkout ios/Runner.xcodeproj/project.pbxproj   # the tool wrongly edits an unrelated build setting
+```
+
+Settings live under `flutter_launcher_icons:` in `pubspec.yaml`. On Android the whole square is inset inside the adaptive icon over `#265F82`, so launcher masks don't clip the G.
+
 ## How the code is organised
 
 ```

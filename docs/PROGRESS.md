@@ -15,7 +15,7 @@ Phases follow the release plan in `PROJECT_CONTEXT.md` §7.
 | 4 | Additional screens | Not started | HRV, SpO2, active minutes, weekly recap, sleep debt, suggested goals, cycle tracking |
 | 5 | Widgets | Not started | |
 | 6 | Notifications, settings, export | Partly done | Settings has Health Connect connect, sample-data switch, appearance, data check |
-| 7 | Beta and store prep | Not started | |
+| 7 | Beta and store prep | Not started | App icon done (default appearance) |
 
 ## Built so far
 
@@ -29,6 +29,7 @@ Phases follow the release plan in `PROJECT_CONTEXT.md` §7.
 ## Log
 
 ### 2026-10-20
+- App icon shipped: v6 Gemini render (white G, green dot, tone-on-tone doodles) cropped to remove the watermark, generated for Android (adaptive, inset over `#265F82`) and iOS with `flutter_launcher_icons`. Dark, tinted and themed variants still to do.
 - Home keeps its last values (SharedPreferences JSON) and refreshes in the background; shimmer skeleton on first launch; ring sweep, count-up, sparkline draw-in, staggered card entrances, slow drifting background. Removed the backdrop blur on cards (no visible difference over a smooth gradient, and it re-ran every frame behind the moving background).
 - Past days' hourly steps cached: a Home refresh dropped from about 340 Health Connect calls to about 24.
 - Fixed: app ran out of memory on launch reading 30 days of raw heart-rate samples. Presence checks now use the steps aggregate and a one-day heart-rate window; Data check limits steps and heart rate to 24 hours.
