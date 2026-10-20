@@ -59,8 +59,8 @@ class SleepScreen extends ConsumerWidget {
     final p = context.palette;
     final data = ref.watch(sleepDataProvider);
     final goals = ref.watch(goalsProvider);
-    return ColoredBox(
-      color: p.background,
+    return Wash(
+      colors: p.sleep,
       child: RefreshIndicator(
         onRefresh: () => ref.refresh(sleepDataProvider.future),
         child: switch (data) {
@@ -169,30 +169,16 @@ class _SleepBody extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         _NightHeader(d: d, goals: goals, week: week, byDay: byDay),
-        Transform.translate(
-          offset: const Offset(0, -Space.l),
-          child: Container(
-            decoration: BoxDecoration(
-              color: p.background,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(Radii.card),
-              ),
-            ),
-            padding: const EdgeInsets.fromLTRB(
-              Space.screen,
-              Space.l,
-              Space.screen,
-              Space.l,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                for (final (i, c) in cards.indexed) ...[
-                  if (i > 0) detailGap,
-                  Entrance(index: i, child: c),
-                ],
+        Padding(
+          padding: screenPadding(context).copyWith(top: 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final (i, c) in cards.indexed) ...[
+                if (i > 0) detailGap,
+                Entrance(index: i, child: c),
               ],
-            ),
+            ],
           ),
         ),
       ],
@@ -200,7 +186,7 @@ class _SleepBody extends StatelessWidget {
   }
 }
 
-/// The dark gradient header. It stays dark in both themes.
+/// Last night at a glance, over the screen's underwater background.
 class _NightHeader extends StatelessWidget {
   const _NightHeader({
     required this.d,
@@ -218,106 +204,84 @@ class _NightHeader extends StatelessWidget {
     final p = context.palette;
     final t = context.type;
     final last = d.lastNight;
-    final on = p.onNight, on2 = p.onNight2;
+    final on = p.ink, on2 = p.ink2;
     final fellAsleep = last?.segments
         .where((s) => s.stage != SleepStage.awake)
         .firstOrNull
         ?.start;
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: p.night,
-          stops: const [0, 0.58, 1],
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          Space.screen,
+          Space.s,
+          Space.screen,
+          Space.xl,
         ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            Space.screen,
-            Space.s,
-            Space.screen,
-            Space.xxl + Space.l,
-          ),
-          child: Column(
-            spacing: Space.l,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'LAST NIGHT',
-                          style: t.eyebrow.copyWith(color: on2),
-                        ),
-                        Text('Sleep', style: t.title.copyWith(color: on)),
-                      ],
-                    ),
+        child: Column(
+          spacing: Space.l,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('LAST NIGHT', style: t.eyebrow.copyWith(color: on2)),
+                      Text('Sleep', style: t.title.copyWith(color: on)),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () => showSleepTargetSheet(context),
-                    tooltip: 'Edit sleep target',
-                    icon: const Icon(Icons.edit_rounded, size: 20),
-                    style: IconButton.styleFrom(
-                      backgroundColor: on.withValues(alpha: 0.12),
-                      foregroundColor: on,
-                      fixedSize: const Size(44, 44),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (final (i, day) in week.indexed)
-                    _WeekDot(
-                      letter: weekdayInitial(day),
-                      met: (byDay[day]?.asleep ?? Duration.zero) >= goals.sleep,
-                      today: i == 6,
-                      palette: p,
-                    ),
-                ],
-              ),
-              if (last == null)
-                Text(
-                  d.supported
-                      ? 'No sleep synced for last night yet'
-                      : 'Sleep isn\'t available from your device',
-                  style: t.headline.copyWith(color: on),
-                  textAlign: TextAlign.center,
-                )
-              else ...[
-                Column(
-                  children: [
-                    MetricText(
-                      hoursMinutesParts(last.asleep),
-                      style: t.hero.copyWith(color: on),
-                      unitColor: on2,
-                    ),
-                    const SizedBox(height: Space.xs),
-                    Text(
-                      'asleep · ${(last.asleep.inMinutes / goals.sleep.inMinutes * 100).round()}% of your ${hoursMinutes(goals.sleep)} target',
-                      style: t.small.copyWith(color: on2),
-                    ),
-                  ],
                 ),
-                Row(
-                  children: [
-                    _NightKv(
-                      clockTime(fellAsleep ?? last.start),
-                      'Fell asleep',
-                    ),
-                    _NightKv(clockTime(last.end), 'Woke up'),
-                    _NightKv(hoursMinutes(last.inBed), 'In bed'),
-                  ],
+                CircleIconButton(
+                  icon: Icons.edit_rounded,
+                  tooltip: 'Edit sleep target',
+                  onPressed: () => showSleepTargetSheet(context),
                 ),
               ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (final (i, day) in week.indexed)
+                  _WeekDot(
+                    letter: weekdayInitial(day),
+                    met: (byDay[day]?.asleep ?? Duration.zero) >= goals.sleep,
+                    today: i == 6,
+                    palette: p,
+                  ),
+              ],
+            ),
+            if (last == null)
+              Text(
+                d.supported
+                    ? 'No sleep synced for last night yet'
+                    : 'Sleep isn\'t available from your device',
+                style: t.headline.copyWith(color: on),
+                textAlign: TextAlign.center,
+              )
+            else ...[
+              Column(
+                children: [
+                  MetricText(
+                    hoursMinutesParts(last.asleep),
+                    style: t.hero.copyWith(color: on),
+                  ),
+                  const SizedBox(height: Space.xs),
+                  Text(
+                    'asleep · ${(last.asleep.inMinutes / goals.sleep.inMinutes * 100).round()}% of your ${hoursMinutes(goals.sleep)} target',
+                    style: t.small.copyWith(color: on2),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  _NightKv(clockTime(fellAsleep ?? last.start), 'Fell asleep'),
+                  _NightKv(clockTime(last.end), 'Woke up'),
+                  _NightKv(hoursMinutes(last.inBed), 'In bed'),
+                ],
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
@@ -338,7 +302,7 @@ class _WeekDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final on = palette.onNight;
+    final on = palette.ink;
     return Container(
       width: 34,
       height: 34,
@@ -351,13 +315,13 @@ class _WeekDot extends StatelessWidget {
           color: today
               ? on
               : met
-              ? palette.sleep.second.withValues(alpha: 0.85)
-              : on.withValues(alpha: 0.18),
+              ? palette.sleep.main
+              : palette.line,
         ),
       ),
       child: Text(
         letter,
-        style: context.type.chip.copyWith(color: today ? on : palette.onNight2),
+        style: context.type.chip.copyWith(color: today ? on : palette.ink2),
         semanticsLabel: met ? '$letter, target met' : letter,
       ),
     );
@@ -371,15 +335,11 @@ class _NightKv extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = context.palette;
     return Expanded(
       child: Column(
         children: [
-          Text(
-            value,
-            style: context.type.metricSmall.copyWith(color: p.onNight),
-          ),
-          Text(label, style: context.type.small.copyWith(color: p.onNight2)),
+          Text(value, style: context.type.metricSmall),
+          Text(label, style: context.type.small),
         ],
       ),
     );

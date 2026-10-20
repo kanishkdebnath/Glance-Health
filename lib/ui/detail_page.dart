@@ -35,7 +35,7 @@ class DetailPage<T> extends ConsumerWidget {
           onRefresh: () => ref.refresh(provider.future),
           child: switch (data) {
             AsyncValue(:final value?) => ListView(
-              padding: detailPadding,
+              padding: screenPadding(context),
               children: [
                 header,
                 const SizedBox(height: Space.l),
@@ -54,11 +54,12 @@ class DetailPage<T> extends ConsumerWidget {
   }
 }
 
-const detailPadding = EdgeInsets.fromLTRB(
+/// Screen padding that leaves room under the floating tab bar.
+EdgeInsets screenPadding(BuildContext context) => EdgeInsets.fromLTRB(
   Space.screen,
   Space.s,
   Space.screen,
-  Space.xl,
+  Space.xl + MediaQuery.paddingOf(context).bottom,
 );
 
 /// Space between stacked cards on detail screens.
@@ -71,7 +72,7 @@ class DetailSkeleton extends StatelessWidget {
   Widget build(BuildContext context) => Shimmer(
     child: ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: detailPadding,
+      padding: screenPadding(context),
       children: const [
         Bone(width: 120, height: 30),
         SizedBox(height: Space.l),

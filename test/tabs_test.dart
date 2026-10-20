@@ -32,7 +32,10 @@ Future<void> pumpApp(WidgetTester tester, ThemeMode mode) async {
 
 Future<void> openTab(WidgetTester tester, String label) async {
   await tester.tap(
-    find.descendant(of: find.byType(NavigationBar), matching: find.text(label)),
+    find.descendant(
+      of: find.byKey(const Key('tabBar')),
+      matching: find.text(label),
+    ),
   );
   await tester.pumpAndSettle();
 }

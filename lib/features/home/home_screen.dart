@@ -13,6 +13,7 @@ import '../../design/motion.dart';
 import '../../design/theme.dart';
 import '../../design/tokens.dart';
 import '../../design/widgets.dart';
+import '../../ui/detail_page.dart';
 import '../../ui/metric_card.dart';
 import 'home_summary.dart';
 
@@ -76,12 +77,7 @@ class _HomeBody extends StatelessWidget {
         StatefulNavigationShell.maybeOf(context)?.goBranch(tab.index);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        Space.screen,
-        Space.s,
-        Space.screen,
-        Space.xl,
-      ),
+      padding: screenPadding(context),
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,12 +460,7 @@ class _HomeSkeleton extends StatelessWidget {
     return Shimmer(
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(
-          Space.screen,
-          Space.s,
-          Space.screen,
-          Space.xl,
-        ),
+        padding: screenPadding(context),
         children: [
           const Row(
             children: [

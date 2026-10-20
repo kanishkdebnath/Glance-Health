@@ -22,72 +22,75 @@ class DataCheckScreen extends ConsumerWidget {
     final t = context.type;
     final p = context.palette;
     final report = ref.watch(dataCheckProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Data check'),
+    return Wash(
+      colors: Wash.mix(p.steps, p.heart),
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-        actions: [
-          if (report case AsyncData(:final value))
-            IconButton(
-              tooltip: 'Copy report',
-              icon: const Icon(Icons.copy_rounded),
-              onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: value.toText()));
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Report copied')),
-                  );
-                }
-              },
-            ),
-        ],
-      ),
-      body: switch (report) {
-        AsyncData(:final value) => ListView(
-          padding: const EdgeInsets.all(Space.screen),
-          children: [
-            Text(
-              'Last 30 days from Health Connect (24 hours for steps and heart rate), read on this phone.',
-              style: t.bodyMuted,
-            ),
-            const SizedBox(height: Space.l),
-            GlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: Space.xs,
-                children: [
-                  Text('Steps today', style: t.label),
-                  Text(
-                    'Health Connect total: ${value.stepsTodayAggregate == null ? '—' : thousands(value.stepsTodayAggregate!)}',
-                    style: t.body,
-                  ),
-                  for (final e in value.stepsTodayBySource.entries)
-                    Text('${e.key}: ${thousands(e.value)}', style: t.small),
-                  if (value.stepsTodayBySource.length > 1)
-                    Text(
-                      'More than one app writes steps. Health Connect counts them once, in its priority order.',
-                      style: t.small.copyWith(color: p.warning),
-                    ),
-                  Text(
-                    'Steps history goes back to: ${value.oldestSteps == null ? '—' : longDate(value.oldestSteps!)}',
-                    style: t.small,
-                  ),
-                ],
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          title: const Text('Data check'),
+          backgroundColor: Colors.transparent,
+          actions: [
+            if (report case AsyncData(:final value))
+              IconButton(
+                tooltip: 'Copy report',
+                icon: const Icon(Icons.copy_rounded),
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: value.toText()));
+                  if (context.mounted) {
+                    showGlassToast(context, 'Report copied');
+                  }
+                },
               ),
-            ),
-            const SizedBox(height: Space.m),
-            for (final f in value.findings) ...[
-              _FindingCard(f),
-              const SizedBox(height: Space.s),
-            ],
           ],
         ),
-        AsyncError(:final error) => Padding(
-          padding: const EdgeInsets.all(Space.screen),
-          child: Text("Couldn't read Health Connect: $error", style: t.body),
-        ),
-        _ => const Center(child: CircularProgressIndicator()),
-      },
+        body: switch (report) {
+          AsyncData(:final value) => ListView(
+            padding: const EdgeInsets.all(Space.screen),
+            children: [
+              Text(
+                'Last 30 days from Health Connect (24 hours for steps and heart rate), read on this phone.',
+                style: t.bodyMuted,
+              ),
+              const SizedBox(height: Space.l),
+              GlassCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: Space.xs,
+                  children: [
+                    Text('Steps today', style: t.label),
+                    Text(
+                      'Health Connect total: ${value.stepsTodayAggregate == null ? '—' : thousands(value.stepsTodayAggregate!)}',
+                      style: t.body,
+                    ),
+                    for (final e in value.stepsTodayBySource.entries)
+                      Text('${e.key}: ${thousands(e.value)}', style: t.small),
+                    if (value.stepsTodayBySource.length > 1)
+                      Text(
+                        'More than one app writes steps. Health Connect counts them once, in its priority order.',
+                        style: t.small.copyWith(color: p.warning),
+                      ),
+                    Text(
+                      'Steps history goes back to: ${value.oldestSteps == null ? '—' : longDate(value.oldestSteps!)}',
+                      style: t.small,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: Space.m),
+              for (final f in value.findings) ...[
+                _FindingCard(f),
+                const SizedBox(height: Space.s),
+              ],
+            ],
+          ),
+          AsyncError(:final error) => Padding(
+            padding: const EdgeInsets.all(Space.screen),
+            child: Text("Couldn't read Health Connect: $error", style: t.body),
+          ),
+          _ => const Center(child: CircularProgressIndicator()),
+        },
+      ),
     );
   }
 }

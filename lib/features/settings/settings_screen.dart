@@ -15,32 +15,37 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.type;
     final mode = ref.watch(themeModeProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
+    final p = context.palette;
+    return Wash(
+      colors: Wash.mix(p.steps, p.sleep),
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(Space.screen),
-        children: [
-          Text('HEALTH DATA', style: t.eyebrow),
-          const SizedBox(height: Space.s),
-          const _HealthDataCard(),
-          const SizedBox(height: Space.xl),
-          Text('APPEARANCE', style: t.eyebrow),
-          const SizedBox(height: Space.s),
-          SegmentedButton<ThemeMode>(
-            segments: const [
-              ButtonSegment(value: ThemeMode.system, label: Text('System')),
-              ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-              ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
-            ],
-            selected: {mode},
-            showSelectedIcon: false,
-            onSelectionChanged: (s) =>
-                ref.read(themeModeProvider.notifier).set(s.first),
-          ),
-        ],
+        appBar: AppBar(
+          title: const Text('Settings'),
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(Space.screen),
+          children: [
+            Text('HEALTH DATA', style: t.eyebrow),
+            const SizedBox(height: Space.s),
+            const _HealthDataCard(),
+            const SizedBox(height: Space.xl),
+            Text('APPEARANCE', style: t.eyebrow),
+            const SizedBox(height: Space.s),
+            Segmented(
+              values: ThemeMode.values,
+              selected: mode,
+              labelOf: (m) => switch (m) {
+                ThemeMode.system => 'System',
+                ThemeMode.light => 'Light',
+                ThemeMode.dark => 'Dark',
+              },
+              onChanged: (m) => ref.read(themeModeProvider.notifier).set(m),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -68,14 +73,11 @@ class _HealthDataCard extends ConsumerWidget {
       ref.invalidate(healthStatusProvider);
       if (ok) ref.read(dataModeProvider.notifier).set(DataMode.healthConnect);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              ok
-                  ? 'Connected to Health Connect'
-                  : 'Access not granted. You can allow it any time.',
-            ),
-          ),
+        showGlassToast(
+          context,
+          ok
+              ? 'Connected to Health Connect'
+              : 'Access not granted. You can allow it any time.',
         );
       }
     }

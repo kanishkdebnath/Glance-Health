@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import '../core/baseline.dart';
 import '../design/theme.dart';
 import '../design/tokens.dart';
+import '../design/widgets.dart';
 import 'status_pill.dart';
 
 /// "How usual works": opened from the info button on the Heart tab.
-Future<void> showStatusExplainer(BuildContext context) => showModalBottomSheet(
-  context: context,
+Future<void> showStatusExplainer(BuildContext context) => showGlassSheet(
+  context,
   builder: (context) {
     final t = context.type;
     final p = context.palette;

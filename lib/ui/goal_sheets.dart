@@ -9,18 +9,12 @@ import '../design/tokens.dart';
 import '../design/widgets.dart';
 
 /// Edit the daily step goal (and an optional weekend goal).
-Future<void> showStepGoalSheet(BuildContext context) => showModalBottomSheet(
-  context: context,
-  isScrollControlled: true,
-  builder: (_) => const _StepGoalSheet(),
-);
+Future<void> showStepGoalSheet(BuildContext context) =>
+    showGlassSheet(context, builder: (_) => const _StepGoalSheet());
 
 /// Edit the nightly sleep target.
-Future<void> showSleepTargetSheet(BuildContext context) => showModalBottomSheet(
-  context: context,
-  isScrollControlled: true,
-  builder: (_) => const _SleepTargetSheet(),
-);
+Future<void> showSleepTargetSheet(BuildContext context) =>
+    showGlassSheet(context, builder: (_) => const _SleepTargetSheet());
 
 class _StepGoalSheet extends ConsumerStatefulWidget {
   const _StepGoalSheet();
@@ -201,33 +195,34 @@ class _Stepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    return Container(
-      padding: EdgeInsets.all(compact ? 6 : 10),
-      decoration: BoxDecoration(
-        color: p.background,
-        borderRadius: BorderRadius.circular(Radii.button + 2),
-      ),
-      child: Row(
-        children: [
-          CircleIconButton(
-            icon: Icons.remove_rounded,
-            tooltip: 'Less',
-            onPressed: onMinus,
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                if (label != null) Text(label!, style: context.type.small),
-                Semantics(liveRegion: true, label: semantics, child: value),
-              ],
+    return GlassSurface(
+      radius: Radii.button + 2,
+      shadow: false,
+      fill: p.chip.withValues(alpha: 0.45),
+      child: Padding(
+        padding: EdgeInsets.all(compact ? 6 : 10),
+        child: Row(
+          children: [
+            CircleIconButton(
+              icon: Icons.remove_rounded,
+              tooltip: 'Less',
+              onPressed: onMinus,
             ),
-          ),
-          CircleIconButton(
-            icon: Icons.add_rounded,
-            tooltip: 'More',
-            onPressed: onPlus,
-          ),
-        ],
+            Expanded(
+              child: Column(
+                children: [
+                  if (label != null) Text(label!, style: context.type.small),
+                  Semantics(liveRegion: true, label: semantics, child: value),
+                ],
+              ),
+            ),
+            CircleIconButton(
+              icon: Icons.add_rounded,
+              tooltip: 'More',
+              onPressed: onPlus,
+            ),
+          ],
+        ),
       ),
     );
   }
