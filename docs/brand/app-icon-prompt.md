@@ -1,5 +1,7 @@
 # App icon prompt (Google Gemini)
 
+> **iOS (Liquid Glass) uses its own clean version.** Apple's guidelines ask for layered vector artwork with a simple solid or gradient background and no baked-in glows, shadows, blur or texture, because the system adds those effects itself and fine detail turns busy in the clear and tinted appearances. The ready-made layers are in [`assets/icon/ios/`](../../assets/icon/ios/README.md): same G, ring, crossbar and green dot, on a teal-to-indigo gradient. The textured, doodled artwork below is for Android, the Play Store, and marketing. See the Liquid Glass prompt at the end for a Gemini concept preview.
+
 Concept: a single bold, rounded white **G** with a small green tip dot, floating directly on a night-sky aurora built from the app's own colour blooms (green, teal, indigo). The whole background carries a faint tone-on-tone doodle pattern and a soft paper-grain texture, so it feels illustrated up close and clean from a distance. The G's open arc echoes the 270° steps ring on Home. Paste the main prompt into Gemini first, then use the follow-up prompts in the same chat for the platform variants.
 
 Colours come from `lib/design/palette.dart`. If the palette changes, update the hex values here.
@@ -109,3 +111,25 @@ Give me one alternative of the main icon where the aurora leans towards dawn: ke
 - View it at 40 px and 60 px next to real home-screen icons: the G and its opening must stay legible, and the doodle pattern should vanish completely.
 - Gemini adds a visible sparkle watermark in the bottom-right corner. The shipped icon must be clean, so treat Gemini output as the concept, then rebuild the final artwork with the exact palette hexes and export the 1024 px master from that. The doodle and paper layers can be redrawn or sourced as a licensed texture.
 - Generate app icon sizes from the master with `flutter_launcher_icons` (add it as a dev dependency when the icon is final), using the foreground, background and monochrome layers for Android.
+
+## Liquid Glass concept prompt (iOS, optional)
+
+The real iOS icon is built from the SVG layers in `assets/icon/ios/` in Icon Composer. Use this only to preview the mood in Gemini.
+
+```
+Create a flat, layered app icon artwork for "Glance Health" designed for Apple's Liquid Glass icon style (iOS 26). It is the source artwork before the system adds glass effects, so it must be clean, simple and flat.
+
+FORMAT
+- Square 1024 × 1024 px, full bleed, no rounded corners, no mask, no mockup.
+
+BACKGROUND
+- A simple smooth linear gradient, top deep teal-blue #123C55 to bottom indigo #33408E. Nothing else in the background: no texture, no pattern, no grain, no blooms.
+
+FOREGROUND
+- One bold geometric capital "G" in solid white #FFFFFF with crisp, sharp-edged vector shapes (not feathered), built from two overlapping filled shapes: a thick circular ring (stroke about 20% of the letter height, round ends) that runs counter-clockwise from about 1 o'clock round to 3 o'clock, leaving an opening on the upper right, and a short capsule-shaped crossbar that runs from the 3 o'clock end of the ring to just left of the circle's centre.
+- One small solid green dot #3FD07A (about 60 px across) sitting in the ring's opening, just past the ring's top end, like the bright leading edge of a progress ring.
+- The letter is about 49% of the icon width, centred, nudged slightly left.
+
+DO NOT INCLUDE
+- Any glow, drop shadow, highlight, bevel, gloss, glass, reflection, blur or gradient on the letter; any texture, doodles or noise; any other text or symbols; rounded corners or borders.
+```
