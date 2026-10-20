@@ -74,6 +74,9 @@ class SleepSession {
   DateTime get day => DateTime(end.year, end.month, end.day);
 }
 
+/// Lowest and highest heart rate recorded on one day, in bpm.
+typedef HeartRange = ({int min, int max});
+
 abstract interface class HealthDataSource {
   Future<Set<Metric>> supportedMetrics();
   Future<DateTime?> lastSync();
@@ -86,6 +89,10 @@ abstract interface class HealthDataSource {
   Future<DailySeries<int>> activeMinutes(DateTime from, DateTime to);
   Future<List<SleepSession>> sleepSessions(DateTime from, DateTime to);
   Future<DailySeries<int>> restingHeartRate(DateTime from, DateTime to);
+
+  /// Keep ranges short: on Health Connect this reads raw samples a day at a
+  /// time.
+  Future<DailySeries<HeartRange>> heartRateRange(DateTime from, DateTime to);
   Future<DailySeries<double>> hrv(DateTime from, DateTime to);
   Future<DailySeries<double>> spo2(DateTime from, DateTime to);
 }

@@ -158,41 +158,56 @@ class HealthConnectSource implements HealthDataSource {
     return pts.map((p) => p.dateTo).reduce((a, b) => a.isAfter(b) ? a : b);
   }
 
-  /// Uses Health Connect's own aggregate, which applies the user's app
-  /// priority order, so phone and band steps aren't counted twice.
-  @override
-  Future<DailySeries<int>> dailySteps(DateTime from, DateTime to) async {
+  /// Steps summed into fixed slices in one call. Health Connect aggregates
+  /// with the user's app priority order, so phone and band steps aren't
+  /// counted twice. Slices with no steps are left out.
+  // ponytail: fixed-length slices drift by an hour across a daylight-saving
+  // change. Use a calendar-period aggregate if the app ships to DST regions
+  // and the plugin exposes one.
+  Future<Map<DateTime, int>> _stepSlices(
+    DateTime from,
+    DateTime to,
+    Duration slice,
+  ) async {
     await _init();
-    final out = <DateTime, int>{};
-    for (
-      var d = dayOf(from);
-      !d.isAfter(to);
-      d = DateTime(d.year, d.month, d.day + 1)
-    ) {
-      final total = await _h.getTotalStepsInInterval(d, _end(d));
-      if (total != null) out[d] = total;
-    }
-    return out;
+    final pts = await _h.getHealthIntervalDataFromTypes(
+      startDate: from,
+      endDate: to,
+      types: [HealthDataType.STEPS],
+      interval: slice.inSeconds,
+    );
+    return {
+      for (final p in pts)
+        if (_num(p) > 0) p.dateFrom: _num(p).round(),
+    };
   }
 
-  // ponytail: 24 aggregate calls per day. Cache past days in local storage
-  // once drift lands; only today needs a live read.
+  @override
+  Future<DailySeries<int>> dailySteps(DateTime from, DateTime to) async {
+    final slices = await _stepSlices(
+      dayOf(from),
+      _end(to),
+      const Duration(days: 1),
+    );
+    return slices.map((t, v) => MapEntry(dayOf(t), v));
+  }
+
   @override
   Future<List<int>> hourlySteps(DateTime day) async {
-    await _init();
-    final now = _clock();
     final start = dayOf(day);
-    return [
-      for (var h = 0; h < 24; h++)
-        if (start.add(Duration(hours: h)).isAfter(now))
-          0
-        else
-          await _h.getTotalStepsInInterval(
-                DateTime(start.year, start.month, start.day, h),
-                DateTime(start.year, start.month, start.day, h + 1),
-              ) ??
-              0,
-    ];
+    final now = _clock();
+    final end = _end(start);
+    if (start.isAfter(now)) return List.filled(24, 0);
+    final slices = await _stepSlices(
+      start,
+      end.isAfter(now) ? now : end,
+      const Duration(hours: 1),
+    );
+    final hours = List.filled(24, 0);
+    for (final MapEntry(key: t, value: v) in slices.entries) {
+      hours[t.hour] += v;
+    }
+    return hours;
   }
 
   @override
@@ -259,6 +274,30 @@ class HealthConnectSource implements HealthDataSource {
       _end(to),
     );
     return _daily(pts, (v) => v.last).map((d, v) => MapEntry(d, v.round()));
+  }
+
+  /// Raw samples, one day per read: a watch writes heart rate every few
+  /// seconds, so longer reads risk running out of memory.
+  @override
+  Future<DailySeries<HeartRange>> heartRateRange(
+    DateTime from,
+    DateTime to,
+  ) async {
+    final out = <DateTime, HeartRange>{};
+    for (
+      var d = dayOf(from);
+      !d.isAfter(to);
+      d = DateTime(d.year, d.month, d.day + 1)
+    ) {
+      final bpm = (await _points(
+        [HealthDataType.HEART_RATE],
+        d,
+        _end(d),
+      )).map((p) => _num(p).round()).where((v) => v > 0);
+      if (bpm.isEmpty) continue;
+      out[d] = (min: bpm.reduce(math.min), max: bpm.reduce(math.max));
+    }
+    return out;
   }
 
   @override

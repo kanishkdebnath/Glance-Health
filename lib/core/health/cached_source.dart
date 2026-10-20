@@ -1,8 +1,8 @@
 import 'health_data_source.dart';
 
-/// Wraps a source and remembers past days' hourly steps, which only change
-/// if a late sync arrives. Today is always read live. This cuts a Home
-/// refresh from about 340 Health Connect calls to about 24.
+/// Wraps a source and remembers settled days' hourly steps and heart-rate
+/// ranges, which only change if a late sync arrives. Recent days are always
+/// read live.
 // ponytail: key-value cache until drift lands; move it into the daily tables then.
 class CachedHourlySource implements HealthDataSource {
   CachedHourlySource(
@@ -19,14 +19,16 @@ class CachedHourlySource implements HealthDataSource {
 
   static String _key(DateTime d) => 'hourly.${d.year}-${d.month}-${d.day}';
 
+  /// Yesterday can still change if the band syncs late in the morning.
+  bool _settled(DateTime d) {
+    final today = dayOf(_clock());
+    return d.isBefore(DateTime(today.year, today.month, today.day - 1));
+  }
+
   @override
   Future<List<int>> hourlySteps(DateTime day) async {
     final d = dayOf(day);
-    final today = dayOf(_clock());
-    // Yesterday can still change if the band syncs late in the morning.
-    final settled = d.isBefore(
-      DateTime(today.year, today.month, today.day - 1),
-    );
+    final settled = _settled(d);
     if (settled) {
       final hit = read(_key(d));
       if (hit != null) return hit.split(',').map(int.parse).toList();
@@ -34,6 +36,34 @@ class CachedHourlySource implements HealthDataSource {
     final hours = await _inner.hourlySteps(d);
     if (settled) write(_key(d), hours.join(','));
     return hours;
+  }
+
+  /// Cached as "min,max", or "" for a settled day with no heart rate.
+  @override
+  Future<DailySeries<HeartRange>> heartRateRange(
+    DateTime from,
+    DateTime to,
+  ) async {
+    final out = <DateTime, HeartRange>{};
+    for (
+      var d = dayOf(from);
+      !d.isAfter(to);
+      d = DateTime(d.year, d.month, d.day + 1)
+    ) {
+      final key = 'hrRange.${d.year}-${d.month}-${d.day}';
+      final hit = _settled(d) ? read(key) : null;
+      if (hit != null) {
+        if (hit.isNotEmpty) {
+          final [lo, hi] = hit.split(',').map(int.parse).toList();
+          out[d] = (min: lo, max: hi);
+        }
+        continue;
+      }
+      final r = (await _inner.heartRateRange(d, d))[d];
+      if (r != null) out[d] = r;
+      if (_settled(d)) write(key, r == null ? '' : '${r.min},${r.max}');
+    }
+    return out;
   }
 
   @override

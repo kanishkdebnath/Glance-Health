@@ -209,6 +209,21 @@ class MockHealthDataSource implements HealthDataSource {
       );
 
   @override
+  Future<DailySeries<HeartRange>> heartRateRange(
+    DateTime from,
+    DateTime to,
+  ) async {
+    final rhr = await restingHeartRate(from, to);
+    return _series(Metric.heartRateRange, from, to, (d, ago) {
+      final r = _rng(d, 9);
+      return (
+        min: (rhr[d] ?? 60) - 4 - r.nextInt(3),
+        max: ago == 0 ? 138 : 110 + r.nextInt(45),
+      );
+    });
+  }
+
+  @override
   Future<DailySeries<double>> hrv(DateTime from, DateTime to) async => _series(
     Metric.hrv,
     from,
