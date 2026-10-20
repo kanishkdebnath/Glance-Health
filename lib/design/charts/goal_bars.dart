@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
@@ -77,64 +78,74 @@ class _BarsPainter extends CustomPainter {
     final base = size.height - pb;
     double y(num v) => pt + (base - pt) * (1 - v / max);
 
+    // The whole chart draws into one layer so the goal pill can clear the
+    // marks behind it and redraw them blurred.
+    canvas.saveLayer(Offset.zero & size, Paint());
     canvas.drawLine(
       Offset(0, base),
       Offset(size.width, base),
       Paint()..color = p.line,
     );
 
-    for (var i = 0; i < n; i++) {
-      final v = w.values[i];
-      final x = i * (bw + gap);
-      final g = goals?[i];
-      final met = g == null || v >= g;
-      final isToday = w.today == i;
-      if (v > 0) {
-        final rect = Rect.fromLTRB(x, y(v), x + bw, base);
-        final radius = Radius.circular(math.min(Radii.bar, bw / 2));
-        final paint = Paint();
-        if (met) {
-          final a = isToday ? 0.6 : 1.0;
-          paint.shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              w.colors.second.withValues(alpha: a),
-              w.colors.main.withValues(alpha: a),
-            ],
-          ).createShader(rect);
-        } else {
-          paint.color = w.colors.dim;
+    void bars(Canvas canvas, {bool labels = true}) {
+      for (var i = 0; i < n; i++) {
+        final v = w.values[i];
+        final x = i * (bw + gap);
+        final g = goals?[i];
+        final met = g == null || v >= g;
+        final isToday = w.today == i;
+        if (v > 0) {
+          final rect = Rect.fromLTRB(x, y(v), x + bw, base);
+          final radius = Radius.circular(math.min(Radii.bar, bw / 2));
+          final paint = Paint();
+          if (met) {
+            final a = isToday ? 0.6 : 1.0;
+            paint.shader = LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                w.colors.second.withValues(alpha: a),
+                w.colors.main.withValues(alpha: a),
+              ],
+            ).createShader(rect);
+          } else {
+            paint.color = w.colors.dim;
+          }
+          canvas.drawRRect(
+            RRect.fromRectAndCorners(rect, topLeft: radius, topRight: radius),
+            paint,
+          );
         }
-        canvas.drawRRect(
-          RRect.fromRectAndCorners(rect, topLeft: radius, topRight: radius),
-          paint,
-        );
-      }
-      if (w.valueLabels.contains(i)) {
-        paintText(
-          canvas,
-          w.format(v),
-          t.chart.copyWith(color: p.ink, fontWeight: FontWeight.w600),
-          Offset(x + bw / 2, y(v) - 4),
-          anchor: TextAnchor.bottomCenter,
-        );
-      }
-      if (hasLabels && i < w.labels.length && w.labels[i].isNotEmpty) {
-        final style = isToday
-            ? t.chart.copyWith(color: p.ink, fontWeight: FontWeight.w700)
-            : t.chart;
-        paintText(
-          canvas,
-          w.labels[i],
-          style,
-          Offset(x + bw / 2, size.height),
-          anchor: TextAnchor.bottomCenter,
-        );
+        if (labels && w.valueLabels.contains(i)) {
+          paintText(
+            canvas,
+            w.format(v),
+            t.chart.copyWith(color: p.ink, fontWeight: FontWeight.w600),
+            Offset(x + bw / 2, y(v) - 4),
+            anchor: TextAnchor.bottomCenter,
+          );
+        }
+        if (labels &&
+            hasLabels &&
+            i < w.labels.length &&
+            w.labels[i].isNotEmpty) {
+          final style = isToday
+              ? t.chart.copyWith(color: p.ink, fontWeight: FontWeight.w700)
+              : t.chart;
+          paintText(
+            canvas,
+            w.labels[i],
+            style,
+            Offset(x + bw / 2, size.height),
+            anchor: TextAnchor.bottomCenter,
+          );
+        }
       }
     }
 
-    if (w.showGoalLine && goals != null && goals.isNotEmpty) {
+    final showGoal = w.showGoalLine && goals != null && goals.isNotEmpty;
+    void goalLine(Canvas canvas) {
+      if (!showGoal) return;
       final line = Paint()
         ..color = p.ink2
         ..strokeWidth = 1.2;
@@ -148,7 +159,14 @@ class _BarsPainter extends CustomPainter {
         dashLine(canvas, start, end, line);
         prev = end;
       }
-      // A solid pill centred on the line, so bars never hide the label.
+    }
+
+    bars(canvas);
+    goalLine(canvas);
+
+    if (showGoal) {
+      // Frosted-glass pill on the line: what's behind it shows through,
+      // blurred, under a light tint.
       final tp = TextPainter(
         text: TextSpan(
           text: 'Goal ${w.format(goals[0])}',
@@ -165,15 +183,32 @@ class _BarsPainter extends CustomPainter {
         ),
         const Radius.circular(Radii.chip),
       );
-      canvas.drawRRect(pill, Paint()..color = p.surface);
+      canvas.drawRRect(pill, Paint()..blendMode = BlendMode.clear);
+      canvas
+        ..save()
+        ..clipRRect(pill)
+        ..saveLayer(
+          pill.outerRect,
+          Paint()..imageFilter = ui.ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        );
+      bars(canvas, labels: false);
+      goalLine(canvas);
+      canvas
+        ..restore()
+        ..restore();
+      canvas.drawRRect(
+        pill,
+        Paint()..color = p.surface.withValues(alpha: 0.35),
+      );
       canvas.drawRRect(
         pill,
         Paint()
-          ..color = p.line
+          ..color = p.ink.withValues(alpha: 0.12)
           ..style = PaintingStyle.stroke,
       );
       tp.paint(canvas, Offset(7, pill.top + 3));
     }
+    canvas.restore();
   }
 
   @override
