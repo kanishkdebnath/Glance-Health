@@ -33,16 +33,16 @@ Always check logcat after installing a release build: several bugs only showed u
 Layers, with imports flowing downward only:
 
 - `lib/app/` — wiring: Riverpod providers (`providers.dart`), the `AppTab` enum, go_router (`router.dart`).
-- `lib/features/<area>/` — screens and their providers (home, settings; steps/sleep/heart are placeholders built on `ui/planned_screen.dart`).
+- `lib/features/<area>/` — screens and their providers (home, steps, sleep, heart, settings). Each tab loads one `FutureProvider` of plain data; Steps and Heart use the shared `ui/detail_page.dart` frame.
 - `lib/ui/` — widgets that combine domain types with the design system (`MetricCard`, `StatusPill`).
 - `lib/design/` — the design system: no health logic. `palette.dart`, `typography.dart`, `tokens.dart`, `theme.dart`, `motion.dart`, `widgets.dart`, `charts/`.
-- `lib/core/` — pure Dart domain: `health/` (data source interface, mock, Health Connect source, cache decorator, data check), `baseline.dart`, `pace.dart`, `goals.dart`, `format.dart`.
+- `lib/core/` — pure Dart domain: `health/` (data source interface, mock, Health Connect source, cache decorator, data check), `baseline.dart`, `pace.dart`, `steps_stats.dart` (streaks, bests), `sleep_stats.dart`, `goals.dart`, `format.dart`.
 
 ### Data flow
 
 `dataModeProvider` (sample vs Health Connect, persisted) → `healthSourceProvider` returns `MockHealthDataSource` or `CachedHourlySource(HealthConnectSource)` → `homeSummaryProvider` calls `loadHomeSummary()` (a pure function, tested directly) and saves the result as JSON in SharedPreferences under `home.v1.<mode>` → `HomeScreen` shows `fresh.value ?? cachedHomeSummaryProvider` so launch is instant, with a shimmer skeleton only when there is no cache. Bump the `v1` in the cache key if the `HomeSummary` JSON shape changes.
 
-Missing values are modelled, not nulls: `Reading<T>` is `Value` / `NoData` (some history, nothing today) / `Unsupported` (nothing in 30 days → UI says "Not available from your device"). Status chips come from `compareToUsual()`: interquartile range of the last 30 days, `learning` until 14 days exist. Summary text (`features/home/headline.dart`) is rule-based and must stay observational: never medical, never "good/bad".
+Missing values are modelled, not nulls: `Reading<T>` is `Value` / `NoData` (some history, nothing today) / `Unsupported` (nothing in 30 days → UI says "Not available from your device"). Goals live in `goalsProvider` (SharedPreferences; no goal history yet). Status chips come from `compareToUsual()`: interquartile range of the last 30 days, `learning` until 14 days exist. Summary text (`features/home/headline.dart`) is rule-based and must stay observational: never medical, never "good/bad".
 
 ### Theming
 
@@ -56,7 +56,7 @@ Use `motion(context, duration)` for every animation so the system reduce-motion 
 
 ## Health Connect gotchas (learned on the device)
 
-- Never read raw `STEPS` or `HEART_RATE` over long ranges: a watch writes heart rate every few seconds and 30 days of samples ran the app out of memory (Java OOM, uncatchable from Dart). Use `getTotalStepsInInterval` (Health Connect's de-duplicated aggregate across apps) for steps and windows of a day or less for heart rate.
+- Never read raw `STEPS` or `HEART_RATE` over long ranges: a watch writes heart rate every few seconds and 30 days of samples ran the app out of memory (Java OOM, uncatchable from Dart). Steps use Health Connect's de-duplicated aggregate: `getHealthIntervalDataFromTypes` with a 1-day or 1-hour `interval` (seconds) returns all slices in one call. Heart rate has no min/max aggregate in the plugin, so `heartRateRange` reads one day per call and the cache keeps settled days.
 - `requestAuthorization` can return false even when the user granted access (Android 16); check `hasPermissions` afterwards (`HealthConnectAccess.connect`).
 - Active minutes have no Health Connect record type; they read as `Unsupported` for now.
 - Android needs `FlutterFragmentActivity`, `minSdk 26`, read-only permissions in the manifest, the permissions-rationale intent filter and the `ViewPermissionUsageActivity` alias. Request only read access; the app never writes health data.
